@@ -296,10 +296,17 @@ if (addAssetForm) {
         const submitBtn = addAssetForm.querySelector('button[type="submit"]');
         if (submitBtn) submitBtn.disabled = true;
 
+        const isEdit = document.getElementById('assetSN').readOnly;
+        if (!isEdit && itAssets.some(a => a.sn === snValue)) {
+            showCopyNotification('⚠️ Erreur: Ce S/N existe déjà !');
+            if (submitBtn) submitBtn.disabled = false;
+            return;
+        }
+
         db.collection("itAssets").doc(snValue).set(newAssetData, { merge: true })
             .then(() => {
-                logActivity('INVENTAIRE', 'MODIF_AJOUT', `Op\u00e9ration sur l'appareil: ${snValue} (${newAssetData.model})`);
-                showCopyNotification('\u2705 Enregistré sur le serveur avec succès');
+                logActivity('INVENTAIRE', 'MODIF_AJOUT', `Opération sur l'appareil: ${snValue} (${newAssetData.model})`);
+                showCopyNotification('✅ Enregistré avec succès');
                 closeAddAssetModal();
                 addAssetForm.reset();
             })
@@ -372,10 +379,16 @@ if (addStockForm) {
         const submitBtn = addStockForm.querySelector('button[type="submit"]');
         if (submitBtn) submitBtn.disabled = true;
 
+        if (itAssets.some(a => a.sn === snValue)) {
+            showCopyNotification('⚠️ Erreur: Ce S/N existe déjà !');
+            if (submitBtn) submitBtn.disabled = false;
+            return;
+        }
+
         db.collection("itAssets").doc(snValue).set(newStockItem, { merge: true })
             .then(() => {
                 logActivity('STOCK', 'AJOUT_STOCK', `Nouveau matériel au stock: ${snValue} (${newStockItem.model})`);
-                showCopyNotification('\u2705 Matériel ajouté au stock avec succès');
+                showCopyNotification('✅ Matériel ajouté avec succès');
                 closeAddStockModal();
                 addStockForm.reset();
             })
