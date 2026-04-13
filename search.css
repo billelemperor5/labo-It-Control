@@ -1,0 +1,108 @@
+/* =============================================
+   GLOBAL LIVE SEARCH OVERLAY
+   ============================================= */
+.search-results-overlay {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-radius: 20px;
+  margin-top: 12px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  z-index: 2000;
+  max-height: 500px;
+  overflow-y: auto;
+  border: 1px solid rgba(0,0,0,0.05);
+  display: none;
+  animation: searchFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dark-mode .search-results-overlay {
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 25px 70px rgba(0,0,0,0.6);
+}
+
+@keyframes searchFadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.search-category-title {
+  padding: 14px 20px 8px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  background: rgba(99, 102, 241, 0.05);
+  border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+}
+
+.search-result-item {
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border-bottom: 1px solid rgba(0,0,0,0.03);
+}
+
+.dark-mode .search-result-item {
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.search-result-item:hover {
+  background: rgba(99, 102, 241, 0.1);
+  padding-left: 28px;
+}
+
+.search-result-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.res-asset .search-result-icon { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+.res-printer .search-result-icon { background: rgba(139, 92, 246, 0.15); color: #8b5cf6; }
+.res-stock .search-result-icon { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+.res-log .search-result-icon { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+
+.search-result-info {
+  flex: 1;
+}
+
+.search-result-main {
+  font-weight: 700;
+  color: var(--text-dark);
+  font-size: 1rem;
+  display: block;
+}
+
+.search-result-sub {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  display: block;
+  margin-top: 2px;
+}
+
+.search-no-results {
+  padding: 50px 20px;
+  text-align: center;
+  color: var(--text-light);
+}
+
+.search-no-results i {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  opacity: 0.3;
+}
