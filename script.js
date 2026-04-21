@@ -886,7 +886,7 @@ function goToSearchResult(type, id) {
 }
 
 function filterAssets(type, customData) {
-    const items = document.querySelectorAll('.filter-item');
+    const items = document.querySelectorAll('.page-section.active .filter-item');
     items.forEach(i => i.classList.remove('active'));
 
     const clickedBtn = Array.from(items).find(i => i.getAttribute('onclick')?.includes(`'${type}'`));
@@ -913,6 +913,25 @@ function filterAssets(type, customData) {
     }
 
     renderAssets(filtered);
+}
+
+function filterPrinters(type) {
+    const items = document.querySelectorAll('#printerFilterMenu .filter-item');
+    items.forEach(i => i.classList.remove('active'));
+
+    const clickedBtn = Array.from(items).find(i => i.getAttribute('onclick')?.includes(`'${type}'`));
+    if (clickedBtn) clickedBtn.classList.add('active');
+
+    let filtered;
+    if (type === 'all') {
+        filtered = itPrinters;
+    } else if (type === 'online') {
+        filtered = itPrinters.filter(p => p.status === 'En Ligne');
+    } else if (type === 'maintenance') {
+        filtered = itPrinters.filter(p => p.status === 'Maintenance');
+    }
+
+    renderPrintersFiltered(filtered);
 }
 
 // =============================================
@@ -1368,7 +1387,7 @@ function updateDashboardStats() {
     // Corrected logic based on user visual badges
     const inServiceAssets = itAssets.filter(a => a.status !== 'En Stock');
     const computersCount = inServiceAssets.length; // Align with "Inventaire des Appareils"
-    const maintenance = itAssets.filter(a => a.status === 'En Maintenance').length;
+    const maintenance = itAssets.filter(a => a.status === 'En Maintenance').length + itPrinters.filter(p => p.status === 'Maintenance').length;
     const stock = itAssets.filter(a => a.status === 'En Stock').length;
     const printers = itPrinters.length;
     const grandTotal = itAssets.length + printers;
