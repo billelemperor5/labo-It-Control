@@ -1,0 +1,21 @@
+{
+  "name": "LABO-IT CONTROL",
+  "short_name": "LABO-IT",
+  "description": "Système professionnel de gestion et de suivi du cycle de vie des équipements IT.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#1e3a8a",
+  "icons": [
+    {
+      "src": "assets/app-icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/app-icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
