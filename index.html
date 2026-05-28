@@ -1,0 +1,3046 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LABO-IT CONTROL | Système de Gestion de Laboratoire Informatique</title>
+
+    <!-- PWA Support -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="icon" type="image/png" href="assets/icon_192.png">
+    <link rel="apple-touch-icon" href="assets/icon_192.png">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&amp;family=Playfair+Display:ital,wght@0,500;0,700;1,500&amp;display=swap"
+        rel="stylesheet">
+    <script>
+        window.LABO_IT_ASSET_VERSION = '2.0.1';
+        (function refreshOldPwaCache() {
+            const supportsPwaOrigin = window.location.protocol === 'http:' || window.location.protocol === 'https:';
+            const versionKey = 'laboItAssetVersion';
+            const currentVersion = window.LABO_IT_ASSET_VERSION;
+            try {
+                if (localStorage.getItem(versionKey) === currentVersion) return;
+            } catch (error) {
+                return;
+            }
+
+            Promise.all([
+                supportsPwaOrigin && 'caches' in window
+                    ? caches.keys().then((keys) => Promise.all(
+                        keys.filter((key) => key.startsWith('labo-it-cache-')).map((key) => caches.delete(key))
+                    ))
+                    : Promise.resolve(),
+                supportsPwaOrigin && 'serviceWorker' in navigator
+                    ? navigator.serviceWorker.getRegistrations().then((registrations) => Promise.all(
+                        registrations.map((registration) => registration.update())
+                    ))
+                    : Promise.resolve()
+            ]).finally(() => {
+                try {
+                    localStorage.setItem(versionKey, currentVersion);
+                } catch (error) {
+                    // Storage can be unavailable on some local/private browser contexts.
+                }
+            });
+        })();
+    </script>
+    <link rel="stylesheet" href="css/style.css?v=2.0.1">
+
+</head>
+
+<body data-theme="light">
+
+    <!-- ============ شاشة اترحب ============ -->
+    <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-bg-elements">
+            <div class="orb orb-1" style="opacity: 0.2; width: 600px; height: 600px;"></div>
+            <div class="orb orb-2" style="opacity: 0.2; width: 500px; height: 500px;"></div>
+            <div class="tech-grid" style="opacity: 0.08;"></div>
+            <div class="welcome-circuit-lines"></div>
+            <div class="welcome-glass-panel welcome-glass-panel-left"></div>
+            <div class="welcome-glass-panel welcome-glass-panel-right"></div>
+        </div>
+
+        <div class="welcome-content">
+            <!-- Microchip Logo as in previous design -->
+            <div class="welcome-logo-outer">
+                <div class="logo-ring"></div>
+                <div class="welcome-logo">
+                    <i class="fas fa-microchip"></i>
+                </div>
+            </div>
+
+            <!-- Generalized Grand Brand Title -->
+            <div class="welcome-brand-container">
+                <div class="welcome-brand-top-line"></div>
+                <div class="welcome-brand-main-text">
+                    <span class="welcome-brand-char-l">L</span>
+                    <span class="welcome-brand-star-wrapper">
+                        <svg viewBox="85 15 75 80" class="welcome-brand-star-svg">
+                            <path
+                                d="M 148,22 C 141,43 135,48 130,54 C 135,60 142,65 147,73 C 135,68 129,64 123,62 C 115,72 109,80 102,88 C 109,72 112,64 115,54 C 105,50 95,48 89,45 C 105,43 112,43 119,45 C 129,36 139,28 148,22 Z" />
+                        </svg>
+                    </span>
+                    <span class="welcome-brand-text-right">BONEDJMA</span>
+                </div>
+                <div class="welcome-brand-subtitle">LABORATOIRES COSMÉTIQUES</div>
+                <div class="welcome-brand-bottom-line"></div>
+            </div>
+
+            <div class="welcome-system-name">LABO-IT CONTROL</div>
+            <p class="welcome-subtitle">PORTAIL TECHNIQUE &amp; SYSTEME DE CONTRIT</p>
+            <button class="welcome-btn" onclick="enterSystem()">
+                Entrer dans le Système <i class="fas fa-sign-in-alt" style="margin-left: 10px;"></i>
+            </button>
+        </div>
+
+        <div class="welcome-author">By.Billel-Bouraba</div>
+        <div class="welcome-footer">
+            <span><i class="fas fa-shield-alt"></i> Système Sécurisé</span>
+            <span><i class="fas fa-cloud"></i> Données Cloud</span>
+            <span><i class="fas fa-bolt"></i> Performance Rapide</span>
+            <span><i class="fas fa-code"></i> Version 2.0.1</span>
+        </div>
+    </div>
+
+    <!-- Beautiful Custom Intervention Pop-up Modal -->
+    <div id="customInterventionOverlay" class="modal-overlay" onclick="closeCustomInterventionModalOuter(event)">
+        <div class="modal"
+            style="max-width: 480px; border-radius: 1.5rem; background: var(--bg-secondary); border: 1px solid var(--border-color); box-shadow: var(--shadow-2xl); padding: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3 id="customInterventionTitle"
+                    style="margin: 0; font-size: 1.4rem; font-weight: 700; background: var(--gradient-blue-purple); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 0.5rem; background-clip: text;">
+                    <i class="fas fa-tools" style="color: var(--indigo-500);"></i> Déclarer une Intervention
+                </h3>
+                <button onclick="closeCustomInterventionModal()"
+                    style="background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1.2rem;">
+                <label
+                    style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Type
+                    d'Intervention</label>
+                <select id="custIntType"
+                    style="width: 100%; padding: 0.85rem 1rem; border-radius: 0.75rem; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary); outline: none; font-size: 0.95rem;"
+                    onchange="toggleCustomInterventionType()">
+                    <option value="Maintenance">Maintenance Générale</option>
+                    <option value="Réparation">Réparation Matérielle</option>
+                    <option value="Remplacement">Remplacement de Composant</option>
+                    <option value="Installation">Installation Logicielle / Config</option>
+                    <option value="Nettoyage">Nettoyage & Entretien</option>
+                    <option value="Diagnostic">Diagnostic & Audit</option>
+                    <option value="Autre">Autre...</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="custIntCustomTypeContainer" style="margin-bottom: 1.2rem; display: none;">
+                <label
+                    style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Spécifiez
+                    le Type d'Intervention</label>
+                <input type="text" id="custIntCustomType" placeholder="Ex: Mise à niveau matérielle, Audit sécurité..."
+                    style="width: 100%; padding: 0.85rem 1rem; border-radius: 0.75rem; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary); outline: none; font-size: 0.95rem;">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1.2rem;">
+                <label
+                    style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Description
+                    des Travaux</label>
+                <textarea id="custIntDesc" rows="3" placeholder="Description détaillée..."
+                    style="width: 100%; padding: 0.85rem 1rem; border-radius: 0.75rem; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary); outline: none; font-size: 0.95rem; resize: none;"></textarea>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 2rem;">
+                <label
+                    style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Technicien
+                    Intervenant</label>
+                <input type="text" id="custIntTech" value="Ali S."
+                    style="width: 100%; padding: 0.85rem 1rem; border-radius: 0.75rem; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary); outline: none; font-size: 0.95rem;">
+            </div>
+
+            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <button class="btn" onclick="closeCustomInterventionModal()"
+                    style="background: var(--bg-secondary); border: 2px solid var(--border-color); color: var(--text-primary); font-weight: 600; padding: 0.75rem 1.5rem; border-radius: 0.75rem; cursor: pointer;">
+                    Annuler
+                </button>
+                <button class="btn btn-primary" id="custIntSaveBtn" onclick="saveCustomIntervention()"
+                    style="background: var(--gradient-blue-purple); border: none; color: white; font-weight: 600; padding: 0.75rem 2rem; border-radius: 0.75rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                    <i class="fas fa-save"></i> Enregistrer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Beautiful Custom Confirm Delete Modal -->
+    <div id="customConfirmOverlay" class="modal-overlay" onclick="closeCustomConfirmModalOuter(event)">
+        <div class="modal"
+            style="max-width: 400px; border-radius: 1.5rem; background: var(--bg-secondary); border: 1px solid var(--border-color); box-shadow: var(--shadow-2xl); padding: 2rem; text-align: center;">
+            <div id="customConfirmIconContainer"
+                style="width: 60px; height: 60px; border-radius: 50%; background: rgba(239, 68, 68, 0.1); color: var(--red-500); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; font-size: 1.8rem;">
+                <i id="customConfirmIcon" class="fas fa-exclamation-triangle"></i>
+            </div>
+
+            <h3 id="customConfirmTitle"
+                style="margin: 0 0 0.75rem; font-size: 1.3rem; font-weight: 700; color: var(--text-primary);">
+                Supprimer l'Intervention
+            </h3>
+
+            <p id="customConfirmDesc"
+                style="margin: 0 0 2rem; font-size: 0.95rem; color: var(--text-muted); line-height: 1.5;">
+                Voulez-vous vraiment supprimer définitivement cette intervention ? Cette action est irréversible.
+            </p>
+
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <button class="btn" onclick="closeCustomConfirmModal()"
+                    style="background: var(--bg-secondary); border: 2px solid var(--border-color); color: var(--text-primary); font-weight: 600; padding: 0.75rem 1.5rem; border-radius: 0.75rem; cursor: pointer; flex: 1;">
+                    Annuler
+                </button>
+                <button class="btn" id="customConfirmYesBtn"
+                    style="background: var(--gradient-orange-red); border: none; color: white; font-weight: 600; padding: 0.75rem 1.5rem; border-radius: 0.75rem; cursor: pointer; flex: 1;">
+                    Supprimer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Beautiful Custom Login Modal -->
+    <div id="customLoginOverlay" class="modal-overlay" onclick="closeCustomLoginModalOuter(event)">
+        <div class="modal login-modal-card">
+            <button type="button" class="login-modal-close" onclick="closeCustomLoginModal()" title="Fermer">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div class="login-modal-hero">
+                <div class="login-modal-icon">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <h3>Connexion Espace IT</h3>
+                <p>Accedez a votre espace securise LABO-IT CONTROL.</p>
+            </div>
+
+            <form id="loginForm" class="login-form" onsubmit="handleLoginSubmit(event)">
+                <div class="login-field">
+                    <label for="loginEmail">Adresse Email</label>
+                    <div class="login-input-shell">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="loginEmail" placeholder="Ex: admin@nedjma.dz" autocomplete="username"
+                            required>
+                    </div>
+                </div>
+
+                <div class="login-field">
+                    <label for="loginPassword">Mot de passe</label>
+                    <div class="login-input-shell">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="loginPassword" placeholder="Mot de passe"
+                            autocomplete="current-password" required>
+                    </div>
+                </div>
+
+                <div class="login-actions">
+                    <button type="button" class="login-btn-secondary" onclick="closeCustomLoginModal()">
+                        Annuler
+                    </button>
+                    <button type="submit" class="login-btn-primary">
+                        <i class="fas fa-right-to-bracket"></i>
+                        <span>Se connecter</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Beautiful KPI Details Popup Modal -->
+    <div id="kpiDetailsOverlay" class="modal-overlay" onclick="closeKpiDetailsModalOuter(event)">
+        <div class="modal"
+            style="max-width: 680px; border-radius: 1.5rem; background: var(--bg-secondary); border: 1px solid var(--border-color); box-shadow: var(--shadow-2xl); padding: 2rem; position: relative;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3 id="kpiDetailsTitle"
+                    style="margin: 0; font-size: 1.4rem; font-weight: 700; background: var(--gradient-blue-purple); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 0.5rem; background-clip: text;">
+                    <i class="fas fa-list-ul"></i> Détails
+                </h3>
+                <button onclick="closeKpiDetailsModal()"
+                    style="background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div style="max-height: 400px; overflow-y: auto; margin-bottom: 1.5rem; padding-right: 0.5rem;"
+                id="kpiDetailsContent">
+                <!-- Content injected dynamically -->
+            </div>
+
+            <div style="display: flex; justify-content: flex-end;">
+                <button class="btn btn-primary" onclick="closeKpiDetailsModal()"
+                    style="background: var(--gradient-blue-purple); border: none; color: white; font-weight: 600; padding: 0.75rem 2rem; border-radius: 0.75rem; cursor: pointer;">
+                    Fermer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Beautiful Cache Cleaning Real-time Progress Modal -->
+    <div id="cacheCleanOverlay" class="modal-overlay cache-clean-overlay">
+        <div class="modal cache-clean-modal">
+
+            <div class="cache-clean-header">
+                <div class="cache-clean-icon">
+                    <i class="fas fa-trash-alt" id="cacheCleanModalIcon"></i>
+                </div>
+                <h3>
+                    Nettoyage du Cache Système 2.0.1
+                </h3>
+                <p>
+                    Exécution des tâches de maintenance en temps réel...
+                </p>
+            </div>
+
+            <!-- Beautiful Progress Bar -->
+            <div class="cache-clean-progress">
+                <div id="cacheCleanProgressBar">
+                </div>
+            </div>
+
+            <!-- Live Operations Log -->
+            <div id="cacheCleanLog" class="cache-clean-log">
+                <!-- Logs will be appended here in real-time -->
+            </div>
+
+            <div class="cache-clean-footer" id="cacheCleanFooter">
+                <i class="fas fa-spinner fa-spin"></i> Traitement en cours...
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ خفة تحرْة احترافة ============ -->
+    <div class="background-container">
+        <div class="tech-grid"></div>
+        <div class="glow-lines"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+        <div class="orb orb-5"></div>
+        <div class="particles" id="particlesContainer"></div>
+    </div>
+
+    <div class="container">
+        <!-- شرط اتاعااثابت -->
+        <nav class="top-nav">
+            <div class="logo-section" style="cursor: pointer;" onclick="showView('dashboardView')"
+                title="Retour au Tableau de Bord">
+                <div class="logo-icon-wrapper">
+                    <i class="fas fa-microchip"></i>
+                </div>
+                <div class="logo-text">
+                    <div style="display: flex; align-items: center; gap: 0.4rem;">
+                        <h2>LABO-IT CONTROL</h2>
+
+                        <!-- Boutons d'informations (Entreprise / Développeur / Paramètres) -->
+                        <div class="header-info-buttons">
+                            <button class="info-btn company-btn" onclick="event.stopPropagation(); openCompanyModal()"
+                                title="Détails de l'Entreprise (LABO NEDJMA)">
+                                <i class="fas fa-building"></i>
+                            </button>
+                            <button class="info-btn developer-btn" onclick="event.stopPropagation(); openDevModal()"
+                                title="Détails du Développeur (Billel Bouraba)">
+                                <i class="fas fa-code"></i>
+                            </button>
+                            <button class="info-btn settings-btn" onclick="event.stopPropagation(); openSettingsModal()"
+                                title="Paramètres du Système">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <span>GESTION LABORATOIRE INFORMATIQUE</span>
+                </div>
+            </div>
+
+            <!-- Logo Central Professionnel -->
+            <div class="top-nav-middle-logo" onclick="showView('dashboardView')" title="Tableau de Bord">
+                <div class="logo-container">
+                    <div class="logo-top-line"></div>
+                    <div class="logo-main-text">
+                        <span class="logo-char-l">L</span>
+                        <span class="logo-star-wrapper">
+                            <svg viewBox="85 15 75 80" class="logo-star-svg">
+                                <path
+                                    d="M 148,22 C 141,43 135,48 130,54 C 135,60 142,65 147,73 C 135,68 129,64 123,62 C 115,72 109,80 102,88 C 109,72 112,64 115,54 C 105,50 95,48 89,45 C 105,43 112,43 119,45 C 129,36 139,28 148,22 Z" />
+                            </svg>
+                        </span>
+                        <span class="logo-text-right">BONEDJMA</span>
+                    </div>
+                    <div class="logo-subtitle">LABORATOIRES COSMÉTIQUES</div>
+                    <div class="logo-bottom-line"></div>
+                </div>
+            </div>
+
+            <div class="nav-actions">
+                <!-- État de Besoins / Achats Dropdown -->
+                <div class="nav-besoin-dropdown" id="besoinDropdown">
+                    <button class="nav-besoin-btn" onclick="toggleBesoinDropdown(event)"
+                        title="État de Besoins mandes d'Achat IT">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Besoins IT</span>
+                        <span class="besoin-count-badge" id="besoinCountBadge">0</span>
+                        <i class="fas fa-chevron-down besoin-chevron"></i>
+                    </button>
+                    <div class="besoin-dropdown-menu" id="besoinDropdownMenu">
+                        <button class="besoin-dropdown-item" onclick="navigateBesoinTab('demandes')">
+                            <i class="fas fa-file-invoice" style="color: #ec4899;"></i>
+                            <span>Demandes d'Achat</span>
+                            <span class="besoin-menu-count" id="besoinDemandesCount">0</span>
+                        </button>
+                        <button class="besoin-dropdown-item" onclick="navigateBesoinTab('envois')">
+                            <i class="fas fa-paper-plane" style="color: #3b82f6;"></i>
+                            <span>Confirmations d'Envoi</span>
+                            <span class="besoin-menu-count" id="besoinEnvoisCount">0</span>
+                        </button>
+                        <button class="besoin-dropdown-item" onclick="navigateBesoinTab('pannes')">
+                            <i class="fas fa-tools" style="color: #f59e0b;"></i>
+                            <span>Fiches de Panne</span>
+                            <span class="besoin-menu-count" id="besoinPannesCount">0</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Authenticated / Login Area -->
+                <div id="authArea" style="display: flex; align-items: center; gap: 0.8rem;">
+                    <!-- Dynamically populated via JS -->
+                </div>
+            </div>
+        </nav>
+
+        <!-- Dashboard View -->
+        <div id="dashboardView" class="view-container view-active">
+
+            <!-- احتÈÉ ارئس>
+            <div class="main-content">
+                <!-- اإحصائات -->
+                <div class="stats-row" id="statsRow">
+                    <div class="stat-card" style="cursor: pointer;" onclick="showKpiDetails('total')">
+                        <div class="stat-icon-wrapper"><i class="fas fa-laptop"></i></div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="statTotal">42</div>
+                            <div class="stat-label">Total Appareils</div>
+                            <div class="stat-change" id="statTotalChange"><i class="fas fa-database"></i> Données live</div>
+                        </div>
+                    </div>
+                    <div class="stat-card" style="cursor: pointer;" onclick="showKpiDetails('laptop')">
+                        <div class="stat-icon-wrapper"><i class="fas fa-laptop"></i></div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="statPC">28</div>
+                            <div class="stat-label">PC Laptop</div>
+                            <div class="stat-change" id="statPCChange"><i class="fas fa-chart-pie"></i> Aucune donnée</div>
+                        </div>
+                    </div>
+                    <div class="stat-card" style="cursor: pointer;" onclick="showKpiDetails('maintenance')">
+                        <div class="stat-icon-wrapper"><i class="fas fa-tools"></i></div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="statMaint">5</div>
+                            <div class="stat-label">En Maintenance</div>
+                            <div class="stat-change" id="statMaintChange"><i class="fas fa-chart-pie"></i> Aucune donnée</div>
+                        </div>
+                    </div>
+                    <div class="stat-card" style="cursor: pointer;" onclick="showKpiDetails('stock')">
+                        <div class="stat-icon-wrapper"><i class="fas fa-boxes"></i></div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="statStock">9</div>
+                            <div class="stat-label">En Stock</div>
+                            <div class="stat-change" id="statStockChange"><i class="fas fa-boxes-stacked"></i> Aucune donnée</div>
+                        </div>
+                    </div>
+                    <div class="stat-card" style="cursor: pointer;" onclick="showKpiDetails('printer')">
+                        <div class="stat-icon-wrapper"><i class="fas fa-print"></i></div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="statPrint">6</div>
+                            <div class="stat-label">Imprimantes</div>
+                            <div class="stat-change" id="statPrintChange"><i class="fas fa-chart-pie"></i> Aucune donnée</div>
+                        </div>
+                    </div>
+                    <div class="stat-card" style="cursor: pointer;" onclick="showKpiDetails('desktop')">
+                        <div class="stat-icon-wrapper"><i class="fas fa-computer"></i></div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="statDesktop">12</div>
+                            <div class="stat-label">PC Bureau</div>
+                            <div class="stat-change" id="statDesktopChange"><i class="fas fa-chart-pie"></i> Aucune donnée</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- اÈحدات اسرعة -->
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-th-large"></i> Modules Rapides
+                    </div>
+                </div>
+                <div class="modules-grid">
+                    <div class="module-card" onclick="showView('inventaireView')">
+                        <div class="module-icon"><i class="fas fa-laptop-medical"></i></div>
+                        <span class="module-badge badge-blue" id="moduleDeviceBadge">42 Appareils</span>
+                        <h4>Inventaire</h4>
+                        <p>Gestion des ordinateurs portables, de bureau et accessoires.</p>
+                        <button class="module-btn">Accéder <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                    <div class="module-card" onclick="showView('imprimantesView')">
+                        <div class="module-icon"><i class="fas fa-print"></i></div>
+                        <span class="module-badge badge-purple" id="modulePrinterBadge">6 Imprimantes</span>
+                        <h4>Imprimantes</h4>
+                        <p>Gestion complète du parc d'impression et maintenance.</p>
+                        <button class="module-btn">Gérer <i class="fas fa-cog"></i></button>
+                    </div>
+                    <div class="module-card" onclick="showView('stockView')">
+                        <div class="module-icon"><i class="fas fa-warehouse"></i></div>
+                        <span class="module-badge badge-cyan" id="moduleStockBadge">9 Pièces</span>
+                        <h4>Stock</h4>
+                        <p>Consommables, pièces de rechange et nouveau matériel.</p>
+                        <button class="module-btn">Parcourir <i class="fas fa-eye"></i></button>
+                    </div>
+                    <div class="module-card" onclick="showView('distributionView')">
+                        <div class="module-icon"><i class="fas fa-hand-holding"></i></div>
+                        <span class="module-badge badge-teal" id="moduleDistributionBadge">Suivi</span>
+                        <h4>Distribution & Prêt</h4>
+                        <p>Distribution de matériel et prêts aux employés.</p>
+                        <button class="module-btn">Gérer <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+
+                <div class="dashboard-analytics" id="dashboardAnalytics">
+                    <section class="analytics-panel analytics-main-panel">
+                        <div class="analytics-panel-header">
+                            <div>
+                                <span class="analytics-eyebrow">Pilotage IT</span>
+                                <h3>Vue analytique du parc</h3>
+                            </div>
+                            <span class="analytics-status-pill"><i class="fas fa-signal"></i> Données live</span>
+                        </div>
+
+                        <div class="analytics-signal-board">
+                            <article class="analytics-signal signal-blue">
+                                <div class="signal-icon"><i class="fas fa-chart-line"></i></div>
+                                <div>
+                                    <span class="kpi-label">Disponibilité du parc</span>
+                                    <strong id="analyticsHealthValue">0%</strong>
+                                    <small id="analyticsHealthSub">0 / 0 actifs</small>
+                                </div>
+                            </article>
+                            <article class="analytics-signal signal-amber">
+                                <div class="signal-icon"><i class="fas fa-screwdriver-wrench"></i></div>
+                                <div>
+                                    <span class="kpi-label">Actions à suivre</span>
+                                    <strong id="analyticsMaintValue">0</strong>
+                                    <small id="analyticsMaintSub">0% du parc</small>
+                                </div>
+                            </article>
+                            <article class="analytics-signal signal-emerald">
+                                <div class="signal-icon"><i class="fas fa-layer-group"></i></div>
+                                <div>
+                                    <span class="kpi-label">Couverture stock</span>
+                                    <strong id="analyticsStockValue">0</strong>
+                                    <small id="analyticsStockSub">0 catégories</small>
+                                </div>
+                            </article>
+                            <article class="analytics-signal signal-rose">
+                                <div class="signal-icon"><i class="fas fa-handshake-angle"></i></div>
+                                <div>
+                                    <span class="kpi-label">Flux utilisateurs</span>
+                                    <strong id="analyticsLoanValue">0</strong>
+                                    <small id="analyticsLoanSub">0 opérations</small>
+                                </div>
+                            </article>
+                        </div>
+
+                        <div class="operations-grid">
+                            <div class="operation-card">
+                                <span>Portables</span>
+                                <strong id="dashboardLaptopCount">0</strong>
+                                <div class="mini-progress"><span id="dashboardLaptopBar"></span></div>
+                            </div>
+                            <div class="operation-card">
+                                <span>Bureaux</span>
+                                <strong id="dashboardDesktopCount">0</strong>
+                                <div class="mini-progress"><span id="dashboardDesktopBar"></span></div>
+                            </div>
+                            <div class="operation-card">
+                                <span>Imprimantes</span>
+                                <strong id="dashboardPrinterCount">0</strong>
+                                <div class="mini-progress"><span id="dashboardPrinterBar"></span></div>
+                            </div>
+                        </div>
+
+                        <!-- Conseil d'utilisation du système -->
+                        <div class="dynamic-advisory-box">
+                            <div class="advisory-icon-wrapper">
+                                <i class="fas fa-lightbulb"></i>
+                            </div>
+                            <div class="advisory-content">
+                                <span class="advisory-title">Conseil d'utilisation</span>
+                                <p id="dynamicAdvisoryText" class="advisory-text">Chargement du conseil du jour...</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="analytics-panel chart-panel">
+                        <div class="analytics-panel-header compact">
+                            <div>
+                                <span class="analytics-eyebrow">Répartition</span>
+                                <h3>Charge par module</h3>
+                            </div>
+                        </div>
+                        <div class="chart-bars" aria-label="Graphique de charge par module">
+                            <div class="chart-item">
+                                <div class="chart-track"><span class="chart-fill fill-blue" id="chartDevices"></span>
+                                </div>
+                                <strong id="chartDevicesValue">0</strong>
+                                <small>Parc</small>
+                            </div>
+                            <div class="chart-item">
+                                <div class="chart-track"><span class="chart-fill fill-purple" id="chartPrinters"></span>
+                                </div>
+                                <strong id="chartPrintersValue">0</strong>
+                                <small>Print</small>
+                            </div>
+                            <div class="chart-item">
+                                <div class="chart-track"><span class="chart-fill fill-cyan" id="chartStock"></span>
+                                </div>
+                                <strong id="chartStockValue">0</strong>
+                                <small>Stock</small>
+                            </div>
+                            <div class="chart-item">
+                                <div class="chart-track"><span class="chart-fill fill-rose"
+                                        id="chartDistribution"></span></div>
+                                <strong id="chartDistributionValue">0</strong>
+                                <small>Prêts</small>
+                            </div>
+                        </div>
+                        <div class="status-ring-row">
+                            <div class="status-ring" id="dashboardStatusRing">
+                                <span id="dashboardStatusRingValue">0</span>
+                            </div>
+                            <div class="status-ring-legend">
+                                <span><i class="legend-dot dot-active"></i><strong id="dashboardStatusActive">0</strong>
+                                    actifs</span>
+                                <span><i class="legend-dot dot-maint"></i><strong
+                                        id="dashboardStatusMaintenance">0</strong> maintenance</span>
+                                <span><i class="legend-dot dot-stock"></i><strong id="dashboardStatusStock">0</strong>
+                                    stock</span>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- جدÈاأجزة -->
+                <div class="data-table-wrapper" id="mainTableWrapper">
+                    <div class="table-header">
+                        <div class="table-title">
+                            <i class="fas fa-table"></i> Appareils Récemment Enregistrés
+                        </div>
+                        <div class="table-actions">
+                            <div class="table-search-field">
+                                <i class="fas fa-search"></i>
+                                <input type="text" placeholder="Recherche rapide..." id="searchInput"
+                                    oninput="filterTable()"
+                                    onfocus="this.parentElement.style.borderColor='var(--blue-500)'; this.parentElement.style.boxShadow='0 0 0 3px rgba(59,130,246,0.1)';"
+                                    onblur="this.parentElement.style.borderColor='var(--border-color)'; this.parentElement.style.boxShadow='none';">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="inventory-table">
+                            <thead>
+                                <tr>
+                                    <th>Utilisateur</th>
+                                    <th>Appareil</th>
+                                    <th>Modèle</th>
+                                    <th>Statut</th>
+                                    <th>Emplacement</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                <!-- Rempli par JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Devices pagination switcher -->
+                    <div id="devicesPagination" class="pagination-container"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inventaire Detailed View -->
+        <div id="inventaireView" class="view-container">
+            <div class="view-header inventory-toolbar">
+                <div class="view-title-box">
+                    <div class="view-icon"><i class="fas fa-laptop-medical"></i></div>
+                    <div class="view-title-text">
+                        <h2>Inventaire Détaillé</h2>
+                        <p>Gestion complète de tous les équipements du laboratoire.</p>
+                    </div>
+                </div>
+                <div class="view-toolbar-actions">
+                    <button class="back-btn header-back-btn inventory-back-btn" onclick="showView('dashboardView')" title="Retour au Tableau de Bord" aria-label="Retour au Tableau de Bord">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <button class="btn btn-primary" onclick="openAddModal()">
+                        <i class="fas fa-plus"></i> Nouvel équipement
+                    </button>
+                </div>
+            </div>
+            <!-- Cards for ACTIV and MAINTENANCE stats -->
+            <div class="modules-grid"
+                style="margin-bottom: 2rem; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));">
+                <div class="stat-card dist-card-total" onclick="filterInventaireByStatus('Total')"
+                    style="cursor: pointer;" title="Afficher tous les appareils">
+                    <div class="stat-icon-wrapper"><i class="fas fa-layer-group"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="inventaireTotalCount">0</div>
+                        <div class="stat-label">Tous les Appareils</div>
+                    </div>
+                </div>
+                <div class="stat-card dist-card-returned" onclick="filterInventaireByStatus('Actif')"
+                    style="cursor: pointer;" title="Filtrer par appareils actifs">
+                    <div class="stat-icon-wrapper"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="inventaireActiveCount">0</div>
+                        <div class="stat-label">Appareils Actifs</div>
+                    </div>
+                </div>
+                <div class="stat-card dist-card-active" onclick="filterInventaireByStatus('Maintenance')"
+                    style="cursor: pointer;" title="Filtrer par appareils en maintenance">
+                    <div class="stat-icon-wrapper"><i class="fas fa-tools"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="inventaireMaintCount">0</div>
+                        <div class="stat-label">En Maintenance</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Here we could have a more advanced table or filters -->
+            <div id="inventaireTableContainer">
+                <!-- Re-using the main table for now -->
+            </div>
+        </div>
+
+        <!-- Imprimantes View -->
+        <div id="imprimantesView" class="view-container">
+            <div class="view-header printers-toolbar">
+                <div class="view-title-box">
+                    <div class="view-icon" style="background: var(--gradient-pink-orange);"><i class="fas fa-print"></i>
+                    </div>
+                    <div class="view-title-text">
+                        <h2>Gestion des Imprimantes</h2>
+                        <p>Suivi de l'État, consommables et maintenance du parc d'impression.</p>
+                    </div>
+                </div>
+                <div class="view-toolbar-actions">
+                    <button class="back-btn header-back-btn printers-back-btn" onclick="showView('dashboardView')" title="Retour au Tableau de Bord" aria-label="Retour au Tableau de Bord">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <button class="btn btn-primary" onclick="openNewPrinterForm()"
+                        style="background: var(--gradient-pink-orange); border: none;">
+                        <i class="fas fa-plus"></i> Nouvelle Imprimante
+                    </button>
+                </div>
+            </div>
+            <div class="modules-grid"
+                style="margin-bottom: 2rem; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+                <!-- Special printer status cards -->
+                <div class="stat-card dist-card-total" onclick="filterPrintersByStatus('Total')"
+                    style="cursor: pointer;" title="Afficher toutes les imprimantes">
+                    <div class="stat-icon-wrapper"><i class="fas fa-layer-group"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="printerTotalCount">0</div>
+                        <div class="stat-label">Toutes Imprimantes</div>
+                    </div>
+                </div>
+                <div class="stat-card printer-card-online" onclick="filterPrintersByStatus('Actif')"
+                    style="cursor: pointer;" title="Filtrer par imprimantes en ligne">
+                    <div class="stat-icon-wrapper"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="printerOnlineCount">0</div>
+                        <div class="stat-label">En Ligne</div>
+                    </div>
+                </div>
+                <div class="stat-card dist-card-active" onclick="filterPrintersByStatus('Maintenance')"
+                    style="cursor: pointer;" title="Filtrer par imprimantes en maintenance">
+                    <div class="stat-icon-wrapper"><i class="fas fa-tools"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="printerMaintCount">0</div>
+                        <div class="stat-label">En Maintenance</div>
+                    </div>
+                </div>
+                <div class="stat-card printer-card-offline" onclick="filterPrintersByStatus('Hors Ligne')"
+                    style="cursor: pointer;" title="Filtrer par imprimantes hors ligne">
+                    <div class="stat-icon-wrapper"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="printerOfflineCount">0</div>
+                        <div class="stat-label">Hors Ligne</div>
+                    </div>
+                </div>
+            </div>
+            <div class="data-table-wrapper">
+                <div class="table-header"
+                    style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                    <h3 style="margin: 0; font-size: 1.2rem; font-weight: 600; color: var(--text-primary);">Liste des
+                        Imprimantes</h3>
+                    <div class="table-actions">
+                        <div class="table-search-field module-search-field">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Recherche rapide..." id="printerSearchInput"
+                                oninput="filterPrintersTable()"
+                                onfocus="this.parentElement.style.borderColor='var(--blue-500)'; this.parentElement.style.boxShadow='0 0 0 3px rgba(59,130,246,0.1)';"
+                                onblur="this.parentElement.style.borderColor='var(--border-color)'; this.parentElement.style.boxShadow='none';">
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="printers-table">
+                        <thead>
+                            <tr>
+                                <th>Modèle</th>
+                                <th>Emplacement</th>
+                                <th>Statut Toner</th>
+                                <th>Dernière Maintenance</th>
+                                <th style="width: 100px; text-align: center;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="printersTableBody">
+                            <!-- Populated dynamically via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Printers pagination switcher -->
+                <div id="printersPagination" class="pagination-container"></div>
+            </div>
+        </div>
+
+        <!-- Stock View -->
+        <div id="stockView" class="view-container">
+            <div class="view-header stock-toolbar">
+                <div class="view-title-box">
+                    <div class="view-icon" style="background: var(--gradient-cyan-blue);"><i
+                            class="fas fa-warehouse"></i></div>
+                    <div class="view-title-text">
+                        <h2>Gestion du Stock</h2>
+                        <p>Inventaire des composants, câblage & matériel de rechange.</p>
+                    </div>
+                </div>
+                <div class="view-toolbar-actions">
+                    <button class="back-btn header-back-btn stock-back-btn" onclick="showView('dashboardView')" title="Retour au Tableau de Bord" aria-label="Retour au Tableau de Bord">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <button class="btn btn-primary" onclick="openAddStockFormGeneric()"
+                        style="background: var(--gradient-cyan-blue); border: none;">
+                        <i class="fas fa-plus"></i> Ajouter au Stock
+                    </button>
+                </div>
+            </div>
+            <div class="modules-grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem;">
+                <div class="stat-card dist-card dist-card-total" onclick="openCategoryDetail('RAM & SSD')"
+                    style="cursor: pointer;">
+                    <div class="stat-icon-wrapper"><i class="fas fa-memory"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" style="font-size: 1.1rem; margin-bottom: 0.2rem;">RAM & SSD</div>
+                        <div class="stat-label" id="stockCount_RAM_SSD"
+                            style="text-transform: none; letter-spacing: normal;">12 unités disponibles</div>
+                    </div>
+                </div>
+                <div class="stat-card dist-card dist-card-purple" onclick="openCategoryDetail('Périphériques')"
+                    style="cursor: pointer;">
+                    <div class="stat-icon-wrapper"><i class="fas fa-mouse"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" style="font-size: 1.1rem; margin-bottom: 0.2rem;">Périphériques</div>
+                        <div class="stat-label" id="stockCount_Peripheriques"
+                            style="text-transform: none; letter-spacing: normal;">45 unités disponibles</div>
+                    </div>
+                </div>
+                <div class="stat-card dist-card dist-card-cyan" onclick="openCategoryDetail('Câblage & Réseau')"
+                    style="cursor: pointer;">
+                    <div class="stat-icon-wrapper"><i class="fas fa-network-wired"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" style="font-size: 1.1rem; margin-bottom: 0.2rem;">Câblage & Réseau</div>
+                        <div class="stat-label" id="stockCount_Cablage_Reseau"
+                            style="text-transform: none; letter-spacing: normal;">80 mètres disponibles</div>
+                    </div>
+                </div>
+                <div class="stat-card dist-card dist-card-returned" onclick="openCategoryDetail('Écrans & Moniteurs')"
+                    style="cursor: pointer;">
+                    <div class="stat-icon-wrapper"><i class="fas fa-desktop"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" style="font-size: 1.1rem; margin-bottom: 0.2rem;">Écrans & Moniteurs
+                        </div>
+                        <div class="stat-label" id="stockCount_Ecrans_Moniteurs"
+                            style="text-transform: none; letter-spacing: normal;">15 unités disponibles</div>
+                    </div>
+                </div>
+                <div class="stat-card dist-card dist-card-active" onclick="openCategoryDetail('PC Portables (Laptops)')"
+                    style="cursor: pointer;">
+                    <div class="stat-icon-wrapper"><i class="fas fa-laptop"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" style="font-size: 1.1rem; margin-bottom: 0.2rem;">PC Portables</div>
+                        <div class="stat-label" id="stockCount_PC_Portables"
+                            style="text-transform: none; letter-spacing: normal;">8 unités disponibles</div>
+                    </div>
+                </div>
+                <div class="stat-card dist-card dist-card-indigo" onclick="openCategoryDetail('PC Bureau (Desktops)')"
+                    style="cursor: pointer;">
+                    <div class="stat-icon-wrapper"><i class="fas fa-server"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" style="font-size: 1.1rem; margin-bottom: 0.2rem;">PC Bureau</div>
+                        <div class="stat-label" id="stockCount_PC_Bureau"
+                            style="text-transform: none; letter-spacing: normal;">5 unités disponibles</div>
+                    </div>
+                </div>
+                <div class="stat-card dist-card dist-card-pink" onclick="openCategoryDetail('Accessoires Divers')"
+                    style="cursor: pointer;">
+                    <div class="stat-icon-wrapper"><i class="fas fa-keyboard"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" style="font-size: 1.1rem; margin-bottom: 0.2rem;">Accessoires</div>
+                        <div class="stat-label" id="stockCount_Accessoires_Divers"
+                            style="text-transform: none; letter-spacing: normal;">24 unités disponibles</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stock Category Detail View -->
+        <div id="stockCategoryDetailView" class="view-container">
+            <div class="view-header stock-category-toolbar">
+                <div class="view-title-box">
+                    <div class="view-icon" id="catDetailIcon" style="background: var(--gradient-cyan-blue);">
+                        <i class="fas fa-memory"></i>
+                    </div>
+                    <div class="view-title-text">
+                        <h2 id="catDetailTitle">RAM & SSD</h2>
+                        <p id="catDetailSub">Inventaire des disques durs SSD, barrettes de RAM et cartes de stockage.
+                        </p>
+                    </div>
+                </div>
+                <div class="view-toolbar-actions">
+                    <button class="back-btn header-back-btn stock-category-back-btn" onclick="showView('stockView')" title="Retour au Stock" aria-label="Retour au Stock">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <button class="btn btn-primary" onclick="openAddStockFormFromCategory()"
+                        style="background: var(--gradient-cyan-blue); border: none;">
+                        <i class="fas fa-plus"></i> Ajouter un Article
+                    </button>
+                </div>
+            </div>
+
+            <!-- Cards for Stock statistics -->
+            <div class="modules-grid"
+                style="margin-bottom: 2rem; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));">
+                <div class="stat-card dist-card-total" onclick="filterStockCatByStatus('Total')"
+                    style="cursor: pointer;" title="Afficher tous les articles de cette catégorie">
+                    <div class="stat-icon-wrapper"><i class="fas fa-layer-group"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stockCatTotalCount">0</div>
+                        <div class="stat-label">Total Articles</div>
+                    </div>
+                </div>
+                <div class="stat-card dist-card-returned" onclick="filterStockCatByStatus('En Stock')"
+                    style="cursor: pointer;" title="Filtrer par articles disponibles">
+                    <div class="stat-icon-wrapper"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stockCatEnStockCount">0</div>
+                        <div class="stat-label">Articles Disponibles</div>
+                    </div>
+                </div>
+                <div class="stat-card printer-card-offline" onclick="filterStockCatByStatus('Rupture')"
+                    style="cursor: pointer;" title="Filtrer par articles en rupture de stock">
+                    <div class="stat-icon-wrapper"><i class="fas fa-times-circle"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stockCatRuptureCount">0</div>
+                        <div class="stat-label">Rupture de Stock</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="data-table-wrapper">
+                <div class="table-header"
+                    style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                    <h3 id="catTableTitle"
+                        style="margin: 0; font-size: 1.2rem; font-weight: 600; color: var(--text-primary);">Articles
+                        enregistrés</h3>
+                    <div class="table-actions">
+                        <div class="table-search-field module-search-field">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Recherche rapide..." id="stockSearchInput"
+                                oninput="filterStockTable()"
+                                onfocus="this.parentElement.style.borderColor='var(--blue-500)'; this.parentElement.style.boxShadow='0 0 0 3px rgba(59,130,246,0.1)';"
+                                onblur="this.parentElement.style.borderColor='var(--border-color)'; this.parentElement.style.boxShadow='none';">
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="stock-category-table">
+                        <thead>
+                            <tr>
+                                <th>Désignation (Nom)</th>
+                                <th>Référence / S/N</th>
+                                <th style="text-align: center;">Quantité</th>
+                                <th>Emplacement</th>
+                                <th>Date Réception</th>
+                                <th>Observations</th>
+                                <th style="width: 120px; text-align: center;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stockCategoryTableBody">
+                            <!-- Populated dynamically via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Stock Category pagination switcher -->
+                <div id="stockCategoryPagination" class="pagination-container"></div>
+            </div>
+        </div>
+
+        <!-- Distribution & Prêt View -->
+        <div id="distributionView" class="view-container">
+            <div class="view-header distribution-toolbar">
+                <div class="view-title-box">
+                    <div class="view-icon" style="background: var(--gradient-emerald-teal);"><i
+                            class="fas fa-hand-holding"></i></div>
+                    <div class="view-title-text">
+                        <h2>Distribution & Prêt de Matériel</h2>
+                        <p>Suivi des distributions et prêts de matériel IT aux employés.</p>
+                    </div>
+                </div>
+                <div class="view-toolbar-actions">
+                    <button class="back-btn header-back-btn distribution-back-btn" onclick="showView('dashboardView')" title="Retour au Tableau de Bord" aria-label="Retour au Tableau de Bord">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <button class="btn btn-primary" onclick="openDistributionForm()"
+                        style="background: var(--gradient-emerald-teal); border: none;">
+                        <i class="fas fa-plus"></i> Nouvelle Distribution
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="modules-grid"
+                style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: 2rem;">
+                <!-- Card 1: Total Distributions -->
+                <div class="stat-card dist-card dist-card-total" onclick="filterDistributionByStatus('Total')"
+                    style="cursor: pointer;" title="Afficher toutes les distributions">
+                    <div class="stat-icon-wrapper"><i class="fas fa-hand-holding"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="distTotalCount">0</div>
+                        <div class="stat-label">Total Distributions</div>
+                    </div>
+                </div>
+                <!-- Card 2: Prêts en Cours -->
+                <div class="stat-card dist-card dist-card-active" onclick="filterDistributionByStatus('Prêt')"
+                    style="cursor: pointer;" title="Filtrer par prêts en cours">
+                    <div class="stat-icon-wrapper"><i class="fas fa-exchange-alt"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="distPretEnCoursCount">0</div>
+                        <div class="stat-label">Prêts en Cours</div>
+                    </div>
+                </div>
+                <!-- Card 3: Rendus -->
+                <div class="stat-card dist-card dist-card-returned" onclick="filterDistributionByStatus('Rendu')"
+                    style="cursor: pointer;" title="Filtrer par matériels rendus">
+                    <div class="stat-icon-wrapper"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="distRenduCount">0</div>
+                        <div class="stat-label">Rendus</div>
+                    </div>
+                </div>
+                <!-- Card 4: En Retard -->
+                <div class="stat-card dist-card dist-card-late" onclick="filterDistributionByStatus('Retard')"
+                    style="cursor: pointer;" title="Filtrer par prêts en retard de restitution">
+                    <div class="stat-icon-wrapper"><i class="fas fa-exclamation-circle"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="distRetardCount">0</div>
+                        <div class="stat-label">En Retard</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="data-table-wrapper">
+                <div class="table-header">
+                    <h3>Historique des Distributions</h3>
+                    <div class="table-actions">
+                        <div class="table-search-field module-search-field">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Rechercher un employé ou un article..." id="distSearchInput"
+                                oninput="renderDistributionTable()"
+                                onfocus="this.parentElement.style.borderColor='var(--blue-500)'; this.parentElement.style.boxShadow='0 0 0 3px rgba(59,130,246,0.1)';"
+                                onblur="this.parentElement.style.borderColor='var(--border-color)'; this.parentElement.style.boxShadow='none';">
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="distribution-table">
+                        <thead>
+                            <tr>
+                                <th>Employé</th>
+                                <th>Service</th>
+                                <th>Article</th>
+                                <th style="text-align: center;">Qté</th>
+                                <th style="text-align: center;">Type</th>
+                                <th>Date</th>
+                                <th style="text-align: center;">Statut</th>
+                                <th style="width: 160px; text-align: center;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="distributionTableBody">
+                            <!-- Populated dynamically via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Distribution pagination switcher -->
+                <div id="distributionPagination" class="pagination-container"></div>
+            </div>
+        </div>
+
+        <!-- Distribution Form View -->
+        <div id="distributionFormView" class="view-container">
+            <div class="view-header form-toolbar distribution-form-toolbar">
+                <div class="view-title-box">
+                    <div class="view-icon" style="background: var(--gradient-emerald-teal);">
+                        <i class="fas fa-hand-holding"></i>
+                    </div>
+                    <div class="view-title-text">
+                        <h2 id="distFormTitle">Nouvelle Distribution</h2>
+                        <p id="distFormSub">Enregistrer une distribution ou un prêt de matériel à un employé.</p>
+                    </div>
+                </div>
+                <div class="view-toolbar-actions">
+                    <button class="back-btn header-back-btn" onclick="closeDistributionForm()" title="Retour aux Distributions" aria-label="Retour aux Distributions">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="premium-form-container">
+                <div class="premium-form-grid">
+                    <!-- Section 1: Informations Employé -->
+                    <div class="form-section-card">
+                        <div class="form-section-title">
+                            <i class="fas fa-user-tie"></i> Informations Employé
+                        </div>
+                        <div class="premium-input-group">
+                            <label>Nom Complet de l'Employé</label>
+                            <div class="premium-input-wrapper">
+                                <input type="text" id="distEmployeeName" placeholder="Ex: Mohamed Benali">
+                                <i class="fas fa-user"></i>
+                            </div>
+                        </div>
+                        <div class="premium-input-group" style="margin-bottom: 0;">
+                            <label>Service / Département</label>
+                            <div class="premium-input-wrapper">
+                                <input type="text" id="distService" placeholder="Ex: Comptabilité, RH, Direction...">
+                                <i class="fas fa-building"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Matériel Distribué -->
+                    <div class="form-section-card">
+                        <div class="form-section-title">
+                            <i class="fas fa-box-open"></i> Matériel Distribué
+                        </div>
+                        <div class="premium-input-group">
+                            <label>Article / Désignation</label>
+                            <div class="premium-input-wrapper">
+                                <input type="text" id="distArticle" placeholder="Ex: Clé USB 32GB, Câble HDMI...">
+                                <i class="fas fa-tag"></i>
+                            </div>
+                        </div>
+                        <div class="premium-input-group" style="margin-bottom: 0;">
+                            <label>Quantité</label>
+                            <div class="premium-input-wrapper">
+                                <input type="number" id="distQty" min="1" value="1" placeholder="Ex: 1">
+                                <i class="fas fa-sort-numeric-up"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Type & Dates -->
+                    <div class="form-section-card">
+                        <div class="form-section-title">
+                            <i class="fas fa-exchange-alt"></i> Type de Distribution
+                        </div>
+                        <div class="premium-input-group">
+                            <label>Type</label>
+                            <div class="premium-input-wrapper">
+                                <select id="distType" onchange="toggleReturnDate()">
+                                    <option value="Don">Don (Attribution définitive)</option>
+                                    <option value="Prêt">Prêt (Temporaire à rendre)</option>
+                                </select>
+                                <i class="fas fa-exchange-alt"></i>
+                            </div>
+                        </div>
+                        <div class="premium-input-group" id="returnDateGroup" style="display: none;">
+                            <label>Date de Retour Prévue</label>
+                            <div class="premium-input-wrapper">
+                                <input type="date" id="distReturnDate">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                        </div>
+                        <div class="premium-input-group" style="margin-bottom: 0;">
+                            <label>Date de Distribution</label>
+                            <div class="premium-input-wrapper">
+                                <input type="date" id="distDate">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 4: Observations -->
+                    <div class="form-section-card">
+                        <div class="form-section-title">
+                            <i class="fas fa-sticky-note"></i> Observations
+                        </div>
+                        <div class="premium-input-group" style="margin-bottom: 0;">
+                            <label>Notes / Remarques</label>
+                            <div class="premium-input-wrapper">
+                                <textarea id="distNotes" placeholder="Notes supplémentaires..."
+                                    style="min-height: 120px;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    style="display:flex; justify-content: flex-end; gap: 1.5rem; margin-top: 3rem; padding-top: 2rem; border-top: 2px dashed var(--border-color);">
+                    <button class="btn"
+                        style="padding:1.2rem 3rem; font-size:1.1rem; border-radius:1rem; font-weight:600; background:var(--bg-secondary); color:var(--text-primary); border:2px solid var(--border-color);"
+                        onclick="closeDistributionForm()">
+                        <i class="fas fa-times"></i> Annuler
+                    </button>
+                    <button class="btn btn-primary" id="saveDistBtn"
+                        style="padding:1.2rem 3rem; font-size:1.1rem; border-radius:1rem; font-weight:600; background: var(--gradient-emerald-teal); border: none;"
+                        onclick="saveDistribution()">
+                        <i class="fas fa-save"></i> Enregistrer
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ État de Besoins View ============ -->
+        <div id="besoinsView" class="view-container">
+            <div class="view-header besoins-toolbar">
+                <div class="view-title-box">
+                    <div class="view-icon" style="background: var(--gradient-rose-amber);">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="view-title-text">
+                        <h2>Demandes d'Achat & Besoins IT</h2>
+                        <p>Suivi et gestion des besoins en consommables, matériels et équipements informatiques.</p>
+                    </div>
+                </div>
+                <div class="besoins-toolbar-actions" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <button class="back-btn header-back-btn besoins-back-btn" onclick="showView('dashboardView')" title="Retour au Tableau de Bord" aria-label="Retour au Tableau de Bord">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <button class="btn btn-primary" onclick="openBesoinForm()"
+                        style="background: var(--gradient-rose-amber); border: none; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-shopping-cart"></i> Nouvelle Demande
+                    </button>
+                    <button class="btn btn-primary" onclick="openEnvoiForm()"
+                        style="background: var(--gradient-blue-cyan); border: none; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-paper-plane"></i> Confirmation d'Envoi
+                    </button>
+                    <button class="btn btn-primary" onclick="openNewPanneForm()"
+                        style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border: none; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-tools"></i> Signaler une Panne
+                    </button>
+                </div>
+            </div>
+
+            <!-- Premium Stats Cards (Matching Distribution View Colors) -->
+            <div class="modules-grid"
+                style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: 2rem;">
+                <div class="stat-card dist-card dist-card-total">
+                    <div class="stat-icon-wrapper"><i class="fas fa-shopping-cart" id="besoinStatIcon1"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="besoinTotalCount">0</div>
+                        <div class="stat-label" id="besoinStatLabel1">Total Demandes</div>
+                    </div>
+                </div>
+                <div class="stat-card dist-card dist-card-active">
+                    <div class="stat-icon-wrapper"><i class="fas fa-hourglass-half" id="besoinStatIcon2"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="besoinEnAttenteCount">0</div>
+                        <div class="stat-label" id="besoinStatLabel2">En Attente</div>
+                    </div>
+                </div>
+                <div class="stat-card dist-card dist-card-returned">
+                    <div class="stat-icon-wrapper"><i class="fas fa-check-circle" id="besoinStatIcon3"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="besoinApprouveCount">0</div>
+                        <div class="stat-label" id="besoinStatLabel3">Approuvées</div>
+                    </div>
+                </div>
+                <div class="stat-card dist-card dist-card-late">
+                    <div class="stat-icon-wrapper"><i class="fas fa-times-circle" id="besoinStatIcon4"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="besoinRejeteCount">0</div>
+                        <div class="stat-label" id="besoinStatLabel4">Rejetées</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Premium Tabs Switcher -->
+            <div class="premium-tabs"
+                style="display: flex; gap: 1rem; margin-bottom: 1.5rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; width: 100%;">
+                <button class="tab-btn active" id="tabDemandesBtn" onclick="switchBesoinsTab('demandes')"
+                    style="background: none; border: none; padding: 0.8rem 1.5rem; font-size: 1rem; font-weight: 700; color: #ec4899; border-bottom: 3px solid #ec4899; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; font-family: inherit;">
+                    <i class="fas fa-shopping-cart"></i> Demandes d'Achat
+                </button>
+                <button class="tab-btn" id="tabEnvoisBtn" onclick="switchBesoinsTab('envois')"
+                    style="background: none; border: none; padding: 0.8rem 1.5rem; font-size: 1rem; font-weight: 700; color: var(--text-muted); border-bottom: 3px solid transparent; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; font-family: inherit;">
+                    <i class="fas fa-paper-plane"></i> Confirmations d'Envoi
+                </button>
+                <button class="tab-btn" id="tabPannesBtn" onclick="switchBesoinsTab('pannes')"
+                    style="background: none; border: none; padding: 0.8rem 1.5rem; font-size: 1rem; font-weight: 700; color: var(--text-muted); border-bottom: 3px solid transparent; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; font-family: inherit;">
+                    <i class="fas fa-tools"></i> Fiches de Panne
+                </button>
+            </div>
+
+            <!-- Tab Content 1: Demandes d'Achat -->
+            <div id="besoinsTabContent" class="tab-content-active">
+                <div class="data-table-wrapper">
+                    <div class="table-header">
+                        <h3>Historique des Demandes d'Achat</h3>
+                        <div class="table-actions">
+                            <div class="table-search-field module-search-field besoins-search-field">
+                                <i class="fas fa-search"></i>
+                                <input type="text" placeholder="Rechercher un demandeur, un service ou un article..."
+                                    id="besoinSearchInput" oninput="renderBesoinsTable()"
+                                    onfocus="this.parentElement.style.borderColor='var(--blue-500)'; this.parentElement.style.boxShadow='0 0 0 3px rgba(59,130,246,0.1)';"
+                                    onblur="this.parentElement.style.borderColor='var(--border-color)'; this.parentElement.style.boxShadow='none';">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="besoins-data-table">
+                            <thead>
+                                <tr>
+                                    <th>N° Demande</th>
+                                    <th>Demandeur</th>
+                                    <th>Service / Dép.</th>
+                                    <th>Date Demande</th>
+                                    <th style="text-align: center;">Priorité</th>
+                                    <th>Date Limite</th>
+                                    <th style="text-align: center;">Statut</th>
+                                    <th style="width: 200px; text-align: center;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="besoinsTableBody">
+                                <!-- Populated dynamically via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Besoins pagination switcher -->
+                    <div id="besoinsPagination" class="pagination-container"></div>
+                </div>
+            </div>
+
+            <!-- Tab Content 2: Confirmations d'Envoi -->
+            <div id="envoisTabContent" style="display: none;">
+                <div class="data-table-wrapper">
+                    <div class="table-header">
+                        <h3>Historique des Confirmations d'Envoi d'Équipement</h3>
+                        <div class="table-actions">
+                            <div class="table-search-field module-search-field besoins-search-field">
+                                <i class="fas fa-search"></i>
+                                <input type="text" placeholder="Rechercher un destinataire, un lieu ou un équipement..."
+                                    id="envoiSearchInput" oninput="renderEnvoisTable()"
+                                    onfocus="this.parentElement.style.borderColor='var(--blue-500)'; this.parentElement.style.boxShadow='0 0 0 3px rgba(59,130,246,0.1)';"
+                                    onblur="this.parentElement.style.borderColor='var(--border-color)'; this.parentElement.style.boxShadow='none';">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="besoins-data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date d'Envoi</th>
+                                    <th>Destinataire</th>
+                                    <th>Lieu de Livraison</th>
+                                    <th>Équipement</th>
+                                    <th>Type</th>
+                                    <th>Quantité</th>
+                                    <th>État</th>
+                                    <th>Statut</th>
+                                    <th style="width: 240px; text-align: center;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="envoisTableBody">
+                                <!-- Populated dynamically via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Envois pagination switcher -->
+                    <div id="envoisPagination" class="pagination-container"></div>
+                </div>
+            </div>
+
+            <!-- Tab Content 3: Fiches de Panne -->
+            <div id="pannesTabContent" style="display: none;">
+                <div class="data-table-wrapper">
+                    <div class="table-header"
+                        style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                        <h3 style="margin: 0; font-size: 1.2rem; font-weight: 600; color: var(--text-primary);">
+                            Historique des Fiches de Panne & Diagnostic</h3>
+                        <div class="table-actions">
+                            <div class="table-search-field module-search-field besoins-search-field">
+                                <i class="fas fa-search"></i>
+                                <input type="text" placeholder="Rechercher par matériel, S/N ou déclarant..."
+                                    id="panneSearchInput" oninput="renderPannesTable()"
+                                    onfocus="this.parentElement.style.borderColor='var(--blue-500)'; this.parentElement.style.boxShadow='0 0 0 3px rgba(59,130,246,0.1)';"
+                                    onblur="this.parentElement.style.borderColor='var(--border-color)'; this.parentElement.style.boxShadow='none';">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="besoins-data-table">
+                            <thead>
+                                <tr>
+                                    <th>N° Fiche</th>
+                                    <th>Équipement</th>
+                                    <th>Numéro de Série (S/N)</th>
+                                    <th>Service</th>
+                                    <th>Déclarant</th>
+                                    <th>Date Signalement</th>
+                                    <th style="text-align: center;">Priorité</th>
+                                    <th style="text-align: center;">Statut</th>
+                                    <th style="width: 240px; text-align: center;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pannesTableBody">
+                                <!-- Populated dynamically via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Pannes pagination switcher -->
+                    <div id="pannesPagination" class="pagination-container"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ État de Besoins Form View ============ -->
+        <div id="besoinsFormView" class="view-container">
+            <div class="view-header form-toolbar besoins-form-toolbar">
+                <div class="view-title-box">
+                    <div class="view-icon" style="background: var(--gradient-rose-amber);">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="view-title-text">
+                        <h2 id="besoinFormTitle">Nouvelle Demande de Besoins</h2>
+                        <p id="besoinFormSub">Déclarez les consommables informatiques ou matériels requis pour votre
+                            service.</p>
+                    </div>
+                </div>
+                <div class="view-toolbar-actions">
+                    <button class="back-btn header-back-btn" onclick="closeBesoinForm()" title="Retour aux Demandes" aria-label="Retour aux Demandes">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="premium-form-container">
+                <div class="premium-form-grid">
+                    <!-- Section 1: Informations Générales -->
+                    <div class="form-section-card" style="grid-column: span 2;">
+                        <div class="form-section-title">
+                            <i class="fas fa-file-invoice"></i> Détails de la Demande
+                        </div>
+                        <div
+                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem;">
+                            <div class="premium-input-group">
+                                <label>Nom du Demandeur</label>
+                                <div class="premium-input-wrapper">
+                                    <input type="text" id="besoinDemandeur" placeholder="Ex: Ahmed Benali">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                            </div>
+                            <div class="premium-input-group">
+                                <label>Service / Département</label>
+                                <div class="premium-input-wrapper">
+                                    <input type="text" id="besoinService" placeholder="Ex: RH, Comptabilité, IT...">
+                                    <i class="fas fa-building"></i>
+                                </div>
+                            </div>
+                            <div class="premium-input-group">
+                                <label>Date de Demande</label>
+                                <div class="premium-input-wrapper">
+                                    <input type="date" id="besoinDate">
+                                    <i class="fas fa-calendar-day"></i>
+                                </div>
+                            </div>
+                            <div class="premium-input-group">
+                                <label>Date Limite souhaitée</label>
+                                <div class="premium-input-wrapper">
+                                    <input type="date" id="besoinDateLimite">
+                                    <i class="fas fa-calendar-times"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 1.5rem;">
+                            <label
+                                style="font-size: 0.9rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.5rem; display: block;">Niveau
+                                de Priorité</label>
+                            <div style="display: flex; gap: 2rem;">
+                                <label
+                                    style="display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.95rem; font-weight: 600; color: var(--text-primary);">
+                                    <input type="radio" name="besoinPriority" value="Urgent" checked
+                                        style="accent-color: #f59e0b; width: 1.2rem; height: 1.2rem;">
+                                    ️ Urgent
+                                </label>
+                                <label
+                                    style="display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.95rem; font-weight: 600; color: var(--text-primary);">
+                                    <input type="radio" name="besoinPriority" value="Très Urgent"
+                                        style="accent-color: #ef4444; width: 1.2rem; height: 1.2rem;">
+                                    Très Urgent
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Tableau des Articles Requis -->
+                    <div class="form-section-card" style="grid-column: span 2;">
+                        <div class="form-section-title"
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
+                            <span><i class="fas fa-list-ol"></i> Articles à Commander</span>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn besoin-add-line-btn" type="button" onclick="addBesoinRow()">
+                                    <span class="besoin-add-line-icon"><i class="fas fa-plus"></i></span>
+                                    <span>Ajouter une Ligne</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive"
+                            style="border: 1px solid var(--border-color); border-radius: 0.8rem; background: var(--bg-secondary);">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr
+                                        style="background: rgba(0, 0, 0, 0.05); border-bottom: 2px solid var(--border-color);">
+                                        <th style="width: 60px; text-align: center; padding: 0.8rem;">N°</th>
+                                        <th style="padding: 0.8rem; text-align: left;">Désignation / Description de
+                                            l'article *</th>
+                                        <th style="width: 120px; padding: 0.8rem; text-align: center;">Quantité *</th>
+                                        <th style="padding: 0.8rem; text-align: left;">Observations (OBS)</th>
+                                        <th style="width: 60px; padding: 0.8rem; text-align: center;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="besoinFormTableBody">
+                                    <!-- Dynamic Rows will be injected here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Control Buttons -->
+                <div
+                    style="display:flex; justify-content: flex-end; gap: 1.5rem; margin-top: 3rem; padding-top: 2rem; border-top: 2px dashed var(--border-color);">
+                    <button class="btn"
+                        style="padding:1.2rem 3rem; font-size:1.1rem; border-radius:1rem; font-weight:600; background:var(--bg-secondary); color:var(--text-primary); border:2px solid var(--border-color);"
+                        onclick="closeBesoinForm()">
+                        <i class="fas fa-times"></i> Annuler
+                    </button>
+                    <button class="btn btn-primary" id="saveBesoinBtn"
+                        style="padding:1.2rem 3rem; font-size:1.1rem; border-radius:1rem; font-weight:600; background: var(--gradient-rose-amber); border: none;"
+                        onclick="saveBesoin()">
+                        <i class="fas fa-save"></i> Enregistrer la Demande
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ Confirmation d'Envoi Form View ============ -->
+        <div id="envoisFormView" class="view-container">
+            <div class="view-header form-toolbar envoi-form-toolbar">
+                <div class="view-title-box">
+                    <div class="view-icon" style="background: var(--gradient-blue-cyan);">
+                        <i class="fas fa-paper-plane"></i>
+                    </div>
+                    <div class="view-title-text">
+                        <h2 id="envoiFormTitle">Nouvelle Confirmation d'Envoi</h2>
+                        <p id="envoiFormSub">Déclarez l'expédition d'ordinateurs, d'imprimantes ou de matériels vers un
+                            destinataire ou une succursale.</p>
+                    </div>
+                </div>
+                <div class="view-toolbar-actions">
+                    <button class="back-btn header-back-btn" onclick="closeEnvoiForm()" title="Retour aux Envois" aria-label="Retour aux Envois">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="premium-form-container">
+                <div class="premium-form-grid"
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
+                    <!-- Section 1: Destinataire & Livraison -->
+                    <div class="form-section-card">
+                        <div class="form-section-title"
+                            style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1.2rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-user-tie" style="color: var(--blue-500);"></i> Destinataire & Destination
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 1.2rem;">
+                            <div class="premium-input-group">
+                                <label
+                                    style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.4rem;">Nom
+                                    du Destinataire *</label>
+                                <div class="premium-input-wrapper">
+                                    <input type="text" id="envoiDestinataire" placeholder="Ex: BOUALAM"
+                                        style="width: 100%; padding: 0.85rem 1rem 0.85rem 2.5rem; border-radius: 0.75rem; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary); outline: none;">
+                                    <i class="fas fa-user"
+                                        style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                                </div>
+                            </div>
+                            <div class="premium-input-group">
+                                <label
+                                    style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.4rem;">Lieu
+                                    de Livraison (Ville/Adresse) *</label>
+                                <div class="premium-input-wrapper">
+                                    <input type="text" id="envoiLieu" placeholder="Ex: DOUIRA"
+                                        style="width: 100%; padding: 0.85rem 1rem 0.85rem 2.5rem; border-radius: 0.75rem; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary); outline: none;">
+                                    <i class="fas fa-map-marker-alt"
+                                        style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                                </div>
+                            </div>
+                            <div class="premium-input-group">
+                                <label
+                                    style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.4rem;">Date
+                                    d'Expédition *</label>
+                                <div class="premium-input-wrapper">
+                                    <input type="date" id="envoiDate"
+                                        style="width: 100%; padding: 0.85rem 1rem 0.85rem 2.5rem; border-radius: 0.75rem; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary); outline: none;">
+                                    <i class="fas fa-calendar-day"
+                                        style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Détails de l'Équipement -->
+                    <div class="form-section-card">
+                        <div class="form-section-title"
+                            style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1.2rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-box-open" style="color: var(--cyan-500);"></i> Spécifications de
+                            l'Équipement
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 1.2rem;">
+                            <div class="premium-input-group">
+                                <label
+                                    style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.4rem;">Nom
+                                    de l'Équipement *</label>
+                                <div class="premium-input-wrapper">
+                                    <input type="text" id="envoiEquipement" placeholder="Ex: ONDULEUR APC"
+                                        style="width: 100%; padding: 0.85rem 1rem 0.85rem 2.5rem; border-radius: 0.75rem; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary); outline: none;">
+                                    <i class="fas fa-desktop"
+                                        style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                                </div>
+                            </div>
+                            <div class="premium-input-group">
+                                <label
+                                    style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.4rem;">Type
+                                    d'Équipement *</label>
+                                <div class="premium-input-wrapper">
+                                    <input type="text" id="envoiType"
+                                        placeholder="Ex: Onduleur (UPS), PC Portable, Imprimante..."
+                                        style="width: 100%; padding: 0.85rem 1rem 0.85rem 2.5rem; border-radius: 0.75rem; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary); outline: none;">
+                                    <i class="fas fa-cog"
+                                        style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                                </div>
+                            </div>
+                            <div class="premium-input-group">
+                                <label
+                                    style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.4rem;">Marque
+                                    *</label>
+                                <div class="premium-input-wrapper">
+                                    <input type="text" id="envoiMarque" placeholder="Ex: APC, Dell, Brother..."
+                                        style="width: 100%; padding: 0.85rem 1rem 0.85rem 2.5rem; border-radius: 0.75rem; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary); outline: none;">
+                                    <i class="fas fa-copyright"
+                                        style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                                </div>
+                            </div>
+                            <div class="premium-input-group">
+                                <label
+                                    style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.4rem;">Image
+                                    du Produit (Optionnelle - Non sauvegardée)</label>
+                                <div class="premium-input-wrapper" style="position: relative;">
+                                    <input type="file" id="envoiImage" accept="image/*"
+                                        onchange="handleEnvoiImageUpload(event)"
+                                        style="width: 100%; padding: 0.85rem 1rem 0.85rem 2.5rem; border-radius: 0.75rem; border: 1px dashed var(--border-color); background: var(--bg-card); color: var(--text-primary); outline: none; cursor: pointer;">
+                                    <i class="fas fa-image"
+                                        style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                                </div>
+                                <span id="envoiImageName"
+                                    style="font-size: 0.8rem; color: #10b981; display: block; margin-top: 0.4rem; font-weight: 600;"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: État & Quantité & Notes -->
+                    <div class="form-section-card" style="grid-column: span 2;">
+                        <div class="form-section-title"
+                            style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1.2rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-clipboard-check" style="color: var(--emerald-500);"></i> État & Expédition
+                        </div>
+                        <div
+                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem;">
+                            <div class="premium-input-group">
+                                <label
+                                    style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.4rem;">État
+                                    / Condition du matériel *</label>
+                                <div class="premium-input-wrapper">
+                                    <input type="text" id="envoiEtat" placeholder="Ex: Bon état -- Change battrey"
+                                        style="width: 100%; padding: 0.85rem 1rem 0.85rem 2.5rem; border-radius: 0.75rem; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary); outline: none;">
+                                    <i class="fas fa-heartbeat"
+                                        style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                                </div>
+                            </div>
+                            <div class="premium-input-group">
+                                <label
+                                    style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.4rem;">Quantité
+                                    *</label>
+                                <div class="premium-input-wrapper">
+                                    <input type="number" id="envoiQty" min="1" placeholder="Ex: 2"
+                                        style="width: 100%; padding: 0.85rem 1rem 0.85rem 2.5rem; border-radius: 0.75rem; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary); outline: none;">
+                                    <i class="fas fa-sort-numeric-up-alt"
+                                        style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="premium-input-group" style="margin-top: 1.2rem; margin-bottom: 0;">
+                            <label
+                                style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.4rem;">Notes
+                                d'Expédition / Description du Transit</label>
+                            <div class="premium-input-wrapper" style="align-items: flex-start; position: relative;">
+                                <textarea id="envoiNotes" rows="3"
+                                    placeholder="Cet équipement a été envoyé à Douira où il sera pris en charge pour être livré..."
+                                    style="width: 100%; padding: 0.85rem 1rem 0.85rem 2.5rem; border-radius: 0.75rem; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary); outline: none; font-family: inherit; font-size: 0.95rem; resize: none; min-height: 80px;"></textarea>
+                                <i class="fas fa-truck-moving"
+                                    style="position: absolute; left: 1rem; top: 1rem; color: var(--text-muted);"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="form-actions"
+                    style="margin-top: 3rem; display: flex; gap: 1.5rem; justify-content: flex-end; padding-top: 2rem; border-top: 2px dashed var(--border-color);">
+                    <button class="btn" type="button" onclick="closeEnvoiForm()"
+                        style="padding: 1rem 2.5rem; font-size: 1rem; border-radius: 0.85rem; font-weight: 600; background: var(--bg-secondary); color: var(--text-primary); border: 2px solid var(--border-color); cursor: pointer;">
+                        Annuler
+                    </button>
+                    <button class="btn btn-primary" onclick="saveEnvoiItem()"
+                        style="padding: 1rem 2.5rem; font-size: 1rem; border-radius: 0.85rem; font-weight: 600; background: var(--gradient-blue-cyan); border: none; color: white; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                        <i class="fas fa-save"></i> Enregistrer & Imprimer PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ Signalement de Panne Form View ============ -->
+        <div id="panneFormView" class="view-container">
+            <div class="view-header form-toolbar panne-form-toolbar">
+                <div class="view-title-box">
+                    <div class="view-icon" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <div class="view-title-text">
+                        <h2 id="panneFormTitle">Signalement de Panne & Diagnostic</h2>
+                        <p id="panneFormSub">Enregistrez un matériel informatique en panne et générez sa fiche technique
+                            d'impression.</p>
+                    </div>
+                </div>
+                <div class="view-toolbar-actions">
+                    <button class="back-btn header-back-btn" onclick="closePanneForm()" title="Retour aux Pannes" aria-label="Retour aux Pannes">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="premium-form-container">
+                <div class="premium-form-grid"
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
+                    <!-- Section 1: Identification du Matériel -->
+                    <div class="form-section-card">
+                        <div class="form-section-title"
+                            style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1.2rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-barcode" style="color: #f59e0b;"></i> Identification du Matériel
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 1.2rem;">
+                            <div class="premium-input-group">
+                                <label
+                                    style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.4rem;">Sélectionner
+                                    un Équipement *</label>
+                                <div class="premium-input-wrapper">
+                                    <select id="panneEquipementSelect" onchange="handlePanneEquipementSelectChange()"
+                                        style="width: 100%; padding: 0.85rem 1rem 0.85rem 2.5rem; border-radius: 0.75rem; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary); outline: none;">
+                                        <option value="">-- Autre matériel (Saisie libre) --</option>
+                                    </select>
+                                    <i class="fas fa-laptop"
+                                        style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                                </div>
+                            </div>
+                            <div class="premium-input-group">
+                                <label
+                                    style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.4rem;">Désignation
+                                    / Nom du Matériel *</label>
+                                <div class="premium-input-wrapper">
+                                    <input type="text" id="panneEquipementName"
+                                        placeholder="Ex: Imprimante HP LaserJet 400"
+                                        style="width: 100%; padding: 0.85rem 1rem 0.85rem 2.5rem; border-radius: 0.75rem; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary); outline: none;">
+                                    <i class="fas fa-keyboard"
+                                        style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                                </div>
+                            </div>
+                            <div class="premium-input-group">
+                                <label
+                                    style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.4rem;">Numéro
+                                    de Série (S/N) *</label>
+                                <div class="premium-input-wrapper">
+                                    <input type="text" id="panneSN" placeholder="Ex: SN-829472"
+                                        style="width: 100%; padding: 0.85rem 1rem 0.85rem 2.5rem; border-radius: 0.75rem; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary); outline: none;">
+                                    <i class="fas fa-tag"
+                                        style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                                </div>
+                            </div>
+                            <div class="premium-input-group">
+                                <label
+                                    style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.4rem;">Type
+                                    d'Équipement *</label>
+                                <div class="premium-input-wrapper">
+                                    <select id="panneType"
+                                        style="width: 100%; padding: 0.85rem 1rem 0.85rem 2.5rem; border-radius: 0.75rem; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary); outline: none;">
+                                        <option>Ordinateur Bureau (Desktop)</option>
+                                        <option>Ordinateur Portable (Laptop)</option>
+                                        <option>Imprimante (Printer)</option>
+                                        <option>Onduleur (UPS)</option>
+                                        <option>Écran / Moniteur</option>
+                                        <option>Matériel Réseau (Switch/Routeur)</option>
+                                        <option>Autre composant</option>
+                                    </select>
+                                    <i class="fas fa-cog"
+                                        style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Détails du Diagnostic & Panne -->
+                    <div class="form-section-card">
+                        <div class="form-section-title"
+                            style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1.2rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-stethoscope" style="color: #f59e0b;"></i> Diagnostic & Localisation
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 1.2rem;">
+                            <div class="premium-input-grid"
+                                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
+                                <div class="premium-input-group">
+                                    <label
+                                        style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.4rem;">Service
+                                        Émetteur *</label>
+                                    <div class="premium-input-wrapper">
+                                        <input type="text" id="panneService" placeholder="Ex: Finance, RH..."
+                                            style="width: 100%; padding: 0.85rem 1rem 0.85rem 2.5rem; border-radius: 0.75rem; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary); outline: none;">
+                                        <i class="fas fa-building"
+                                            style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                                    </div>
+                                </div>
+                                <div class="premium-input-group">
+                                    <label
+                                        style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.4rem;">Déclarant
+                                        de la Panne *</label>
+                                    <div class="premium-input-wrapper">
+                                        <input type="text" id="panneDeclarant" placeholder="Ex: Billel Bouraba"
+                                            style="width: 100%; padding: 0.85rem 1rem 0.85rem 2.5rem; border-radius: 0.75rem; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary); outline: none;">
+                                        <i class="fas fa-user"
+                                            style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                                    </div>
+                                </div>
+                                <div class="premium-input-group">
+                                    <label
+                                        style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.4rem;">Téléphone
+                                        Déclarant</label>
+                                    <div class="premium-input-wrapper">
+                                        <input type="text" id="panneTelephone" placeholder="Ex: +213 770 XX XX XX"
+                                            style="width: 100%; padding: 0.85rem 1rem 0.85rem 2.5rem; border-radius: 0.75rem; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary); outline: none;">
+                                        <i class="fas fa-phone-alt"
+                                            style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="premium-input-grid"
+                                style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div class="premium-input-group">
+                                    <label
+                                        style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.4rem;">Niveau
+                                        de Gravité *</label>
+                                    <div class="premium-input-wrapper">
+                                        <select id="panneGravite"
+                                            style="width: 100%; padding: 0.85rem 1rem 0.85rem 2.5rem; border-radius: 0.75rem; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary); outline: none;">
+                                            <option>Faible</option>
+                                            <option selected>Moyenne</option>
+                                            <option>Haute</option>
+                                            <option>Critique</option>
+                                        </select>
+                                        <i class="fas fa-exclamation-circle"
+                                            style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                                    </div>
+                                </div>
+                                <div class="premium-input-group">
+                                    <label
+                                        style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.4rem;">Date
+                                        du Signalement *</label>
+                                    <div class="premium-input-wrapper">
+                                        <input type="date" id="panneDate"
+                                            style="width: 100%; padding: 0.85rem 1rem 0.85rem 2.5rem; border-radius: 0.75rem; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary); outline: none;">
+                                        <i class="fas fa-calendar"
+                                            style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="premium-input-group">
+                                <label
+                                    style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.4rem;">Ajouter
+                                    un Visuel / Image de la panne (Optionnel)</label>
+                                <div class="premium-input-wrapper">
+                                    <input type="file" id="panneImage" accept="image/*"
+                                        onchange="handlePanneImageUpload(event)" style="display: none;">
+                                    <button class="btn" type="button"
+                                        onclick="document.getElementById('panneImage').click()"
+                                        style="width: 100%; padding: 0.85rem; border-radius: 0.75rem; border: 2px dashed var(--border-color); background: rgba(245, 158, 11, 0.05); color: var(--text-primary); cursor: pointer; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: 0.3s;">
+                                        <i class="fas fa-camera" style="color: #f59e0b;"></i> Choisir une Image
+                                    </button>
+                                </div>
+                                <small id="panneImageName"
+                                    style="display: block; margin-top: 0.4rem; font-size: 0.8rem; font-weight: 600; text-align: center;"></small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Description & Symptômes -->
+                    <div class="form-section-card" style="grid-column: span 2;">
+                        <div class="form-section-title"
+                            style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1.2rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-align-left" style="color: #f59e0b;"></i> Description des Symptômes & État
+                            du Matériel
+                        </div>
+                        <div class="premium-input-group">
+                            <label
+                                style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.4rem;">Description
+                                détaillée du Problème *</label>
+                            <div class="premium-input-wrapper" style="align-items: flex-start; position: relative;">
+                                <textarea id="panneNotes" rows="4"
+                                    placeholder="Veuillez décrire le problème précisément (Ex: L'ordinateur démarre mais l'écran reste noir avec un bip continu. Testé avec un autre écran, même problème...)"
+                                    style="width: 100%; padding: 0.85rem 1rem 0.85rem 2.5rem; border-radius: 0.75rem; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary); outline: none; font-family: inherit; font-size: 0.95rem; resize: none; min-height: 100px;"></textarea>
+                                <i class="fas fa-comment-slash"
+                                    style="position: absolute; left: 1rem; top: 1rem; color: var(--text-muted);"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="form-actions"
+                    style="margin-top: 3rem; display: flex; gap: 1.5rem; justify-content: flex-end; padding-top: 2rem; border-top: 2px dashed var(--border-color);">
+                    <button class="btn" type="button" onclick="closePanneForm()"
+                        style="padding: 1rem 2.5rem; font-size: 1rem; border-radius: 0.85rem; font-weight: 600; background: var(--bg-secondary); color: var(--text-primary); border: 2px solid var(--border-color); cursor: pointer;">
+                        Annuler
+                    </button>
+                    <button class="btn btn-primary" onclick="savePanneItem()"
+                        style="padding: 1rem 2.5rem; font-size: 1rem; border-radius: 0.85rem; font-weight: 600; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border: none; color: white; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                        <i class="fas fa-save"></i> Enregistrer
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="deviceFormView" class="view-container">
+            <div class="view-header form-toolbar device-form-toolbar">
+                <div class="view-title-box">
+                    <div class="view-icon" style="background: var(--gradient-blue-purple);">
+                        <i class="fas fa-laptop-medical"></i>
+                    </div>
+                    <div class="view-title-text">
+                        <h2 id="modalTitle">Nouveau Appareil</h2>
+                        <p>Remplissez les informations ci-dessous.</p>
+                    </div>
+                </div>
+                <div class="view-toolbar-actions">
+                    <button class="back-btn header-back-btn" onclick="closeAddModal()" title="Retour à l'Inventaire" aria-label="Retour à l'Inventaire">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="premium-form-container">
+
+                <div class="form-section-card" style="margin-bottom: 2rem;">
+                    <div class="form-section-title">
+                        <i class="fas fa-layer-group"></i> Type d'Appareil
+                    </div>
+                    <!-- Èع اجاز -->
+                    <div class="device-type-selector">
+                        <label class="type-option">
+                            <input type="radio" name="deviceType" value="Laptop" id="typeLaptop" checked>
+                            <div class="type-card">
+                                <i class="fas fa-laptop"></i>
+                                <span>Laptop</span>
+                            </div>
+                        </label>
+                        <label class="type-option">
+                            <input type="radio" name="deviceType" value="Desktop" id="typeDesktop">
+                            <div class="type-card">
+                                <i class="fas fa-computer"></i>
+                                <span>PC Bureau</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="premium-form-grid">
+                    <!-- Section 1 -->
+                    <div class="form-section-card">
+                        <div class="form-section-title">
+                            <i class="fas fa-id-card"></i> Identifiants & Spécs
+                        </div>
+                        <div class="premium-input-group">
+                            <label
+                                style="font-size: 0.8rem; opacity: 0.85; color: var(--indigo-500); font-weight: bold; margin-bottom: 0.25rem; display: block;">
+                                <i class="fas fa-barcode" style="margin-right: 0.25rem;"></i> Numéro de Série (S/N)
+                            </label>
+                            <div class="premium-input-wrapper">
+                                <input type="text" id="addSN" placeholder="Ex: SN-2024-XXXX">
+                            </div>
+                        </div>
+                        <div class="premium-input-group">
+                            <label
+                                style="font-size: 0.8rem; opacity: 0.85; color: var(--purple-500); font-weight: bold; margin-bottom: 0.25rem; display: block;">
+                                <i class="fas fa-laptop-code" style="margin-right: 0.25rem;"></i> Modèle
+                            </label>
+                            <div class="premium-input-wrapper">
+                                <input type="text" id="addModel" placeholder="Ex: HP ProBook 450 G8">
+                            </div>
+                        </div>
+                        <!-- Hidden main specs field for full compatibility -->
+                        <input type="hidden" id="addSpecs">
+
+                        <div class="premium-input-group">
+                            <label
+                                style="font-size: 0.8rem; opacity: 0.85; color: var(--blue-500); font-weight: bold; margin-bottom: 0.25rem; display: block;">
+                                <i class="fas fa-microchip" style="margin-right: 0.25rem;"></i> Processeur (CPU)
+                            </label>
+                            <div class="premium-input-wrapper">
+                                <input type="text" id="addCPU" placeholder="Ex: Intel Core i5"
+                                    oninput="assembleSpecs()">
+                            </div>
+                        </div>
+                        <div class="premium-input-group">
+                            <label
+                                style="font-size: 0.8rem; opacity: 0.85; color: var(--pink-500); font-weight: bold; margin-bottom: 0.25rem; display: block;">
+                                <i class="fas fa-memory" style="margin-right: 0.25rem;"></i> Mémoire RAM
+                            </label>
+                            <div class="premium-input-wrapper">
+                                <input type="text" id="addRAM" placeholder="Ex: 16GB RAM" oninput="assembleSpecs()">
+                            </div>
+                        </div>
+                        <div class="premium-input-group">
+                            <label
+                                style="font-size: 0.8rem; opacity: 0.85; color: var(--amber-500); font-weight: bold; margin-bottom: 0.25rem; display: block;">
+                                <i class="fas fa-hdd" style="margin-right: 0.25rem;"></i> Stockage (Disque)
+                            </label>
+                            <div class="premium-input-wrapper">
+                                <input type="text" id="addDisk" placeholder="Ex: 256GB SSD" oninput="assembleSpecs()">
+                            </div>
+                        </div>
+                        <div class="premium-input-group" style="margin-bottom: 0;">
+                            <label
+                                style="font-size: 0.8rem; opacity: 0.85; color: var(--teal-500); font-weight: bold; margin-bottom: 0.25rem; display: block;">
+                                <i class="fas fa-headphones" style="margin-right: 0.25rem;"></i> Accessoires Inclus
+                            </label>
+                            <div class="premium-input-wrapper">
+                                <input type="text" id="addAccessories" placeholder="Ex: Clavier, Souris, Sacoche...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2 -->
+                    <div class="form-section-card">
+                        <div class="form-section-title">
+                            <i class="fas fa-user-tie"></i> Affectation & Emplacement
+                        </div>
+                        <div class="premium-input-group">
+                            <label
+                                style="font-size: 0.8rem; opacity: 0.85; color: var(--blue-500); font-weight: bold; margin-bottom: 0.25rem; display: block;">
+                                <i class="fas fa-user" style="margin-right: 0.25rem;"></i> Utilisateur (Employé)
+                            </label>
+                            <div class="premium-input-wrapper">
+                                <input type="text" id="addUser" placeholder="Nom Complet de l'employé">
+                            </div>
+                        </div>
+                        <div class="premium-input-group" style="margin-bottom: 0;">
+                            <label
+                                style="font-size: 0.8rem; opacity: 0.85; color: var(--purple-500); font-weight: bold; margin-bottom: 0.25rem; display: block;">
+                                <i class="fas fa-building" style="margin-right: 0.25rem;"></i> Service / Département
+                            </label>
+                            <div class="premium-input-wrapper">
+                                <input type="text" id="addService" placeholder="Ex: Finance, RH, IT...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 3 -->
+                    <div class="form-section-card">
+                        <div class="form-section-title">
+                            <i class="fas fa-clipboard-check"></i> État & Suivi
+                        </div>
+                        <div class="premium-input-group">
+                            <label
+                                style="font-size: 0.8rem; opacity: 0.85; color: var(--emerald-500); font-weight: bold; margin-bottom: 0.25rem; display: block;">
+                                <i class="fas fa-info-circle" style="margin-right: 0.25rem;"></i> Statut Actuel
+                            </label>
+                            <div class="premium-input-wrapper">
+                                <select id="addStatus">
+                                    <option value="Actif">En Service (Actif)</option>
+                                    <option value="Maintenance">En Maintenance</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="premium-input-group">
+                            <label
+                                style="font-size: 0.8rem; opacity: 0.85; color: var(--pink-500); font-weight: bold; margin-bottom: 0.25rem; display: block;">
+                                <i class="fas fa-calendar-alt" style="margin-right: 0.25rem;"></i> Date d'Affectation
+                            </label>
+                            <div class="premium-input-wrapper">
+                                <input type="date" id="addDate">
+                            </div>
+                        </div>
+                        <div class="premium-input-group" style="margin-bottom: 0;">
+                            <label
+                                style="font-size: 0.8rem; opacity: 0.85; color: var(--amber-500); font-weight: bold; margin-bottom: 0.25rem; display: block;">
+                                <i class="fas fa-sticky-note" style="margin-right: 0.25rem;"></i> Notes / Observations
+                            </label>
+                            <div class="premium-input-wrapper">
+                                <textarea id="addNotes"
+                                    placeholder="Remarques particulières, État physique..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    style="display:flex; justify-content: flex-end; gap: 1.5rem; margin-top: 3rem; padding-top: 2rem; border-top: 2px dashed var(--border-color);">
+                    <button class="btn"
+                        style="padding:1.2rem 3rem; font-size:1.1rem; border-radius:1rem; font-weight:600; background:var(--bg-secondary); color:var(--text-primary); border:2px solid var(--border-color);"
+                        onclick="closeAddModal()">
+                        <i class="fas fa-times"></i> Annuler
+                    </button>
+                    <button class="btn btn-primary" id="saveBtn"
+                        style="padding:1.2rem 3rem; font-size:1.1rem; border-radius:1rem; font-weight:600; box-shadow: var(--shadow-glow-blue);">
+                        <i class="fas fa-save"></i> Enregistrer l'Appareil
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Printer Form View (SPA) -->
+        <div id="printerFormView" class="view-container">
+            <div class="view-header form-toolbar printer-form-toolbar">
+                <div class="view-title-box">
+                    <div class="view-icon" style="background: var(--gradient-pink-orange);">
+                        <i class="fas fa-print"></i>
+                    </div>
+                    <div class="view-title-text">
+                        <h2 id="prnFormTitle">Nouvelle Imprimante</h2>
+                        <p id="prnFormDesc">Ajouter une imprimante au parc d'impression.</p>
+                    </div>
+                </div>
+                <div class="view-toolbar-actions">
+                    <button class="back-btn header-back-btn" onclick="closePrinterForm()" title="Retour aux Imprimantes" aria-label="Retour aux Imprimantes">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="premium-form-container">
+                <div class="premium-form-grid">
+                    <!-- Section 1 -->
+                    <div class="form-section-card">
+                        <div class="form-section-title">
+                            <i class="fas fa-info-circle"></i> Informations Générales
+                        </div>
+                        <div class="premium-input-group">
+                            <label
+                                style="font-size: 0.8rem; opacity: 0.85; color: var(--purple-500); font-weight: bold; margin-bottom: 0.25rem; display: block;">
+                                <i class="fas fa-print" style="margin-right: 0.25rem;"></i> Modèle Imprimante
+                            </label>
+                            <div class="premium-input-wrapper">
+                                <input type="text" id="addPrnModel" placeholder="Ex: HP LaserJet Pro M404">
+                            </div>
+                        </div>
+                        <div class="premium-input-group">
+                            <label
+                                style="font-size: 0.8rem; opacity: 0.85; color: var(--indigo-500); font-weight: bold; margin-bottom: 0.25rem; display: block;">
+                                <i class="fas fa-barcode" style="margin-right: 0.25rem;"></i> Numéro de Série (S/N)
+                            </label>
+                            <div class="premium-input-wrapper">
+                                <input type="text" id="addPrnSN" placeholder="Ex: VNB45... ">
+                            </div>
+                        </div>
+                        <div class="premium-input-group" style="margin-bottom: 0;">
+                            <label
+                                style="font-size: 0.8rem; opacity: 0.85; color: var(--amber-500); font-weight: bold; margin-bottom: 0.25rem; display: block;">
+                                <i class="fas fa-cogs" style="margin-right: 0.25rem;"></i> Type d'Imprimante
+                            </label>
+                            <div class="premium-input-wrapper">
+                                <select id="addPrnType">
+                                    <option>Laser (Monochrome)</option>
+                                    <option>Laser (Couleur)</option>
+                                    <option>Jet d'encre</option>
+                                    <option>Multifonction (MFP)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2 -->
+                    <div class="form-section-card">
+                        <div class="form-section-title">
+                            <i class="fas fa-map-marker-alt"></i> Emplacement & Réseau
+                        </div>
+                        <div class="premium-input-group">
+                            <label
+                                style="font-size: 0.8rem; opacity: 0.85; color: var(--purple-500); font-weight: bold; margin-bottom: 0.25rem; display: block;">
+                                <i class="fas fa-building" style="margin-right: 0.25rem;"></i> Service / Emplacement
+                            </label>
+                            <div class="premium-input-wrapper">
+                                <input type="text" id="addPrnLocation" placeholder="Ex: Secrétariat, Bureau RH...">
+                            </div>
+                        </div>
+                        <div class="premium-input-group">
+                            <label
+                                style="font-size: 0.8rem; opacity: 0.85; color: var(--indigo-500); font-weight: bold; margin-bottom: 0.25rem; display: block;">
+                                <i class="fas fa-network-wired" style="margin-right: 0.25rem;"></i> Adresse IP (Réseau)
+                            </label>
+                            <div class="premium-input-wrapper">
+                                <input type="text" id="addPrnIP" placeholder="Ex: 192.168.1.50">
+                            </div>
+                        </div>
+                        <div class="premium-input-group" style="margin-bottom: 0;">
+                            <label
+                                style="font-size: 0.8rem; opacity: 0.85; color: var(--teal-500); font-weight: bold; margin-bottom: 0.25rem; display: block;">
+                                <i class="fas fa-plug" style="margin-right: 0.25rem;"></i> Connexion
+                            </label>
+                            <div class="premium-input-wrapper">
+                                <select id="addPrnConnexion">
+                                    <option>Réseau (Ethernet/WiFi)</option>
+                                    <option>USB (Locale)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 3 -->
+                    <div class="form-section-card">
+                        <div class="form-section-title">
+                            <i class="fas fa-tint"></i> Consommables & État
+                        </div>
+                        <div class="premium-input-group" style="margin-bottom: 0;">
+                            <label
+                                style="font-size: 0.8rem; opacity: 0.85; color: var(--emerald-500); font-weight: bold; margin-bottom: 0.25rem; display: block;">
+                                <i class="fas fa-info-circle" style="margin-right: 0.25rem;"></i> Statut
+                            </label>
+                            <div class="premium-input-wrapper">
+                                <select id="addPrnStatus">
+                                    <option>En Ligne (Actif)</option>
+                                    <option>Hors Ligne (Panne)</option>
+                                    <option>En Maintenance</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    style="display:flex; justify-content: flex-end; gap: 1.5rem; margin-top: 3rem; padding-top: 2rem; border-top: 2px dashed var(--border-color);">
+                    <button class="btn"
+                        style="padding:1.2rem 3rem; font-size:1.1rem; border-radius:1rem; font-weight:600; background:var(--bg-secondary); color:var(--text-primary); border:2px solid var(--border-color);"
+                        onclick="closePrinterForm()">
+                        <i class="fas fa-times"></i> Annuler
+                    </button>
+                    <button class="btn btn-primary" id="savePrnBtn"
+                        style="padding:1.2rem 3rem; font-size:1.1rem; border-radius:1rem; font-weight:600; background: var(--gradient-pink-orange); border: none;">
+                        <i class="fas fa-save"></i> Enregistrer
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stock Form View (SPA) -->
+        <div id="stockFormView" class="view-container">
+            <div class="view-header form-toolbar stock-form-toolbar">
+                <div class="view-title-box">
+                    <div class="view-icon" style="background: var(--gradient-cyan-blue);">
+                        <i class="fas fa-warehouse"></i>
+                    </div>
+                    <div class="view-title-text">
+                        <h2 id="stockFormTitle">Ajouter au Stock</h2>
+                        <p id="stockFormSub">Enregistrer une nouvelle pièce ou du matériel.</p>
+                    </div>
+                </div>
+                <div class="view-toolbar-actions">
+                    <button class="back-btn header-back-btn" onclick="closeStockForm()" title="Retour" aria-label="Retour">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="premium-form-container">
+                <div class="premium-form-grid">
+                    <!-- Section 1 -->
+                    <div class="form-section-card">
+                        <div class="form-section-title">
+                            <i class="fas fa-box"></i> Informations Produit
+                        </div>
+                        <div class="premium-input-group">
+                            <label>Désignation (Nom)</label>
+                            <div class="premium-input-wrapper">
+                                <input type="text" id="addStockName" placeholder="Ex: Disque Dur SSD Samsung 500GB">
+                                <i class="fas fa-tag"></i>
+                            </div>
+                        </div>
+                        <div class="premium-input-group">
+                            <label>Catégorie</label>
+                            <div class="premium-input-wrapper">
+                                <select id="addStockCategory">
+                                    <option value="RAM & SSD">RAM & SSD</option>
+                                    <option value="Périphériques">Périphériques</option>
+                                    <option value="Câblage & Réseau">Câblage & Réseau</option>
+                                    <option value="Écrans & Moniteurs">Écrans & Moniteurs</option>
+                                    <option value="PC Portables (Laptops)">PC Portables (Laptops)</option>
+                                    <option value="PC Bureau (Desktops)">PC Bureau (Desktops)</option>
+                                    <option value="Accessoires Divers">Accessoires Divers</option>
+                                </select>
+                                <i class="fas fa-layer-group"></i>
+                            </div>
+                        </div>
+                        <div class="premium-input-group" style="margin-bottom: 0;">
+                            <label>Numéro de Série / Référence</label>
+                            <div class="premium-input-wrapper">
+                                <input type="text" id="addStockRef" placeholder="Ex: REF-10293">
+                                <i class="fas fa-barcode"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2 -->
+                    <div class="form-section-card">
+                        <div class="form-section-title">
+                            <i class="fas fa-layer-group"></i> Quantité & Stockage
+                        </div>
+                        <div class="premium-input-group">
+                            <label>Quantité Entrante</label>
+                            <div class="premium-input-wrapper">
+                                <input type="number" id="addStockQty" min="1" placeholder="Ex: 10">
+                                <i class="fas fa-sort-numeric-up"></i>
+                            </div>
+                        </div>
+                        <div class="premium-input-group" style="margin-bottom: 0;">
+                            <label>Emplacement (Rayon/Étagère)</label>
+                            <div class="premium-input-wrapper">
+                                <input type="text" id="addStockLocation" placeholder="Ex: Armoire A, Étagère 2">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 3 -->
+                    <div class="form-section-card">
+                        <div class="form-section-title">
+                            <i class="fas fa-calendar-alt"></i> Réception & Notes
+                        </div>
+                        <div class="premium-input-group">
+                            <label>Date de Réception</label>
+                            <div class="premium-input-wrapper">
+                                <input type="date" id="addStockDate">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                        </div>
+                        <div class="premium-input-group" style="margin-bottom: 0;">
+                            <label>Observations</label>
+                            <div class="premium-input-wrapper">
+                                <textarea id="addStockNotes" placeholder="Notes supplémentaires..."
+                                    style="min-height: 80px;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    style="display:flex; justify-content: flex-end; gap: 1.5rem; margin-top: 3rem; padding-top: 2rem; border-top: 2px dashed var(--border-color);">
+                    <button class="btn"
+                        style="padding:1.2rem 3rem; font-size:1.1rem; border-radius:1rem; font-weight:600; background:var(--bg-secondary); color:var(--text-primary); border:2px solid var(--border-color);"
+                        onclick="closeStockForm()">
+                        <i class="fas fa-times"></i> Annuler
+                    </button>
+                    <button class="btn btn-primary" id="saveStockBtn"
+                        style="padding:1.2rem 3rem; font-size:1.1rem; border-radius:1rem; font-weight:600; background: var(--gradient-cyan-blue); border: none;"
+                        onclick="saveStockItem()">
+                        <i class="fas fa-save"></i> Enregistrer
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Device Detail Page (Dedicated View) -->
+        <div id="deviceDetailView" class="view-container">
+            <div class="view-header detail-toolbar">
+                <div class="view-title-box">
+                    <div class="view-icon" style="background: var(--gradient-cyan-blue);"><i
+                            class="fas fa-laptop-medical"></i></div>
+                    <div class="view-title-text">
+                        <h2>Fiche Appareil Détaillée</h2>
+                        <p>Vue d'ensemble complète et caractéristiques du matériel.</p>
+                    </div>
+                </div>
+
+                <div class="detail-toolbar-actions">
+                    <button class="back-btn header-back-btn detail-back-btn" onclick="showView('inventaireView')" title="Retour à l'Inventaire" aria-label="Retour à l'Inventaire">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <button class="btn"
+                        style="background: var(--bg-card); color: var(--text-primary); border: 2px solid var(--border-color);"
+                        id="detailPageActionEdit">
+                        <i class="fas fa-edit"></i> Modifier l'équipement
+                    </button>
+                    <button class="btn btn-primary" style="background: var(--gradient-emerald-teal); border: none;"
+                        id="detailPageActionPrint">
+                        <i class="fas fa-file-pdf"></i> Générer la Décharge
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sleek Glassmorphism Detail Grid -->
+            <div class="premium-detail-grid">
+                <!-- Left Pane: Elegant Status Card -->
+                <div class="premium-detail-card left-hero-card">
+                    <div class="hero-avatar-glow" id="detailPageIcon">
+                        <i class="fas fa-laptop"></i>
+                    </div>
+                    <div class="hero-device-type" id="detailPageType">Ordinateur Portable</div>
+                    <h3 class="hero-device-model" id="detailPageModelName">Dell Latitude 5540</h3>
+
+                    <div class="hero-meta-badge">
+                        <i class="fas fa-barcode"></i> <span id="detailPageSN">SN-001</span>
+                    </div>
+
+                    <div class="hero-status-pill" id="detailPageStatus">
+                        <span class="status-dot"></span> En Service
+                    </div>
+
+                    <div class="hero-action-divider"></div>
+
+                    <!-- Observations section -->
+                    <div class="hero-obs-box">
+                        <span class="hero-obs-title"><i class="far fa-comment-alt"></i> Observations / Notes</span>
+                        <p class="hero-obs-text" id="detailPageNotes">"Aucune observation particulière."</p>
+                    </div>
+
+                    <div class="hero-action-divider"></div>
+
+                    <!-- Interventions / صاة Section for Computers -->
+                    <div style="width: 100%; text-align: left;">
+                        <label
+                            style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; font-weight: 600;">
+                            <i class="fas fa-tools" style="color: var(--indigo-500);"></i> Interventions & Maintenance
+                        </label>
+                        <div class="interventions-list" id="deviceDetailPageInterventions"
+                            style="display: flex; flex-direction: column; gap: 0.5rem; max-height: 160px; overflow-y: auto; padding-right: 0.25rem;">
+                            <!-- Rendered dynamically -->
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary"
+                        style="width: 100%; border-radius: 1rem; padding: 1rem; font-weight: 600; margin-top: 1.5rem; background: var(--gradient-blue-purple); border: none; color: white; display: flex; align-items: center; justify-content: center; gap: 0.5rem; cursor: pointer;"
+                        onclick="openDeviceInterventionModal()">
+                        <i class="fas fa-plus"></i> Nouvelle Intervention
+                    </button>
+
+                </div>
+
+                <!-- Right Pane: Organized Information & Specs -->
+                <div class="premium-detail-card device-unified-info-card">
+
+                    <!-- Section 1: Informations Affectation -->
+                    <div class="premium-detail-card detail-card-blue">
+                        <div class="detail-section-title" style="border-color: rgba(59, 130, 246, 0.2);">
+                            <i class="fas fa-user-tie" style="color: var(--blue-500);"></i> Informations Affectation &
+                            Détenteur
+                        </div>
+                        <div class="detail-specs-grid">
+                            <div class="spec-data-item-colored item-blue">
+                                <div class="item-icon-circle"><i class="fas fa-user-tie"></i></div>
+                                <div class="item-content-wrapper">
+                                    <span class="spec-label">Détenteur de l'Appareil</span>
+                                    <span class="spec-value" id="detailPageUser">Ahmed Aloui</span>
+                                </div>
+                            </div>
+                            <div class="spec-data-item-colored item-purple">
+                                <div class="item-icon-circle"><i class="fas fa-building"></i></div>
+                                <div class="item-content-wrapper">
+                                    <span class="spec-label">Service / Département</span>
+                                    <span class="spec-value" id="detailPageService">Département IT</span>
+                                </div>
+                            </div>
+                            <div class="spec-data-item-colored item-pink">
+                                <div class="item-icon-circle"><i class="fas fa-calendar-alt"></i></div>
+                                <div class="item-content-wrapper">
+                                    <span class="spec-label">Date d'Affectation</span>
+                                    <span class="spec-value" id="detailPageDate">2026-05-01</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Fiche Technique Specs -->
+                    <div class="premium-detail-card detail-card-purple">
+                        <div class="detail-section-title" style="border-color: rgba(139, 92, 246, 0.2);">
+                            <i class="fas fa-sliders-h" style="color: var(--purple-500);"></i> Fiche Technique &
+                            Performance Graphique
+                        </div>
+                        <div class="graphic-specs-grid" id="detailPageSpecsGraphic">
+                            <!-- Populated dynamically with gorgeous graphics -->
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Accessoires Remis -->
+                    <div class="premium-detail-card detail-card-pink">
+                        <div class="detail-section-title" style="border-color: rgba(236, 72, 153, 0.2);">
+                            <i class="fas fa-cubes" style="color: var(--pink-500);"></i> Accessoires & Équipements
+                            Associés
+                        </div>
+                        <div class="accessories-flex-container" id="detailPageAccessories">
+                            <span class="accessory-pill"><i class="fas fa-check"></i> Souris Sans Fil</span>
+                            <span class="accessory-pill"><i class="fas fa-check"></i> Sacoche Targus</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Printer Detail View (SPA) -->
+        <div id="printerDetailView" class="view-container">
+            <div class="view-header printer-detail-toolbar">
+                <div class="view-title-box">
+                    <div class="view-icon" style="background: var(--gradient-pink-orange);"><i class="fas fa-print"></i>
+                    </div>
+                    <div class="view-title-text">
+                        <h2>Fiche Imprimante Détaillée</h2>
+                        <p>Vue d'ensemble complète et suivi technique de l'imprimante.</p>
+                    </div>
+                </div>
+
+                <div class="printer-detail-toolbar-actions view-toolbar-actions">
+                    <button class="back-btn header-back-btn printer-detail-back-btn" onclick="showView('imprimantesView')" title="Retour aux Imprimantes" aria-label="Retour aux Imprimantes">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <button class="btn" onclick="editPrinter(activePrinterId, event)"
+                        style="background: var(--bg-card); color: var(--text-primary); border: 2px solid var(--border-color);">
+                        <i class="fas fa-edit"></i> Modifier l'imprimante
+                    </button>
+                </div>
+            </div>
+
+            <div class="premium-detail-grid">
+                <!-- Left Pane: Elegant Status Card -->
+                <div class="premium-detail-card left-hero-card">
+                    <!-- Giant Orange Glow Printer Icon -->
+                    <div class="hero-avatar-glow" id="prnDetailPageIcon"
+                        style="background: var(--gradient-orange-red); box-shadow: var(--shadow-glow-red);">
+                        <i class="fas fa-print"></i>
+                    </div>
+                    <div class="hero-device-type" id="prnDetailPageType">Imprimante</div>
+                    <h3 class="hero-device-model" id="prnDetailPageModelName">HP LaserJet Pro M404</h3>
+
+                    <div class="hero-meta-badge">
+                        <i class="fas fa-barcode"></i> <span id="prnDetailPageSN">SN-PRN-001</span>
+                    </div>
+
+                    <div class="hero-status-pill" id="prnDetailPageStatus">
+                        <span class="status-dot"></span> En Ligne
+                    </div>
+
+                    <div class="hero-action-divider"></div>
+
+                    <div style="width: 100%; text-align: left;">
+                        <label
+                            style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); display: block; margin-bottom: 0.5rem;">Adresse
+                            IP Réseau</label>
+                        <span id="prnDetailPageIP"
+                            style="font-size: 1.1rem; font-weight: 700; color: var(--indigo-500); display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-network-wired"></i> 192.168.1.50
+                        </span>
+                    </div>
+
+                    <div class="hero-action-divider"></div>
+
+                    <!-- Interventions / صاة Section -->
+                    <div style="width: 100%; text-align: left;">
+                        <label
+                            style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; font-weight: 600;">
+                            <i class="fas fa-tools" style="color: var(--amber-500);"></i> Interventions & Maintenance
+                        </label>
+                        <div class="interventions-list" id="prnDetailPageInterventions"
+                            style="display: flex; flex-direction: column; gap: 0.5rem; max-height: 160px; overflow-y: auto; padding-right: 0.25rem;">
+                            <!-- Rendered dynamically -->
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary"
+                        style="width: 100%; border-radius: 1rem; padding: 1rem; font-weight: 600; margin-top: 1.5rem; background: var(--gradient-pink-orange); border: none; color: white; display: flex; align-items: center; justify-content: center; gap: 0.5rem; cursor: pointer;"
+                        onclick="openPrinterInterventionModal()">
+                        <i class="fas fa-plus"></i> Nouvelle Intervention
+                    </button>
+                </div>
+
+                <!-- Right Side: Comprehensive Specifications and details -->
+                <div class="premium-detail-card printer-unified-info-card">
+                    <!-- Section 1: Detailed Specifications -->
+                    <div class="premium-detail-card detail-card-indigo" style="margin-bottom: 2rem;">
+                        <div class="detail-section-title" style="border-color: rgba(99, 102, 241, 0.2);">
+                            <i class="fas fa-info-circle" style="color: var(--indigo-500);"></i> Fiche Technique de
+                            l'Imprimante
+                        </div>
+                        <div class="detail-specs-grid"
+                            style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+                            <div class="spec-data-item-colored item-blue">
+                                <div class="item-icon-circle"><i class="fas fa-print"></i></div>
+                                <div class="item-content-wrapper">
+                                    <span class="spec-label">Modèle</span>
+                                    <span class="spec-value" id="prnDetailPageSpecModel">HP LaserJet Pro M404</span>
+                                </div>
+                            </div>
+                            <div class="spec-data-item-colored item-purple">
+                                <div class="item-icon-circle"><i class="fas fa-cogs"></i></div>
+                                <div class="item-content-wrapper">
+                                    <span class="spec-label">Type d'Imprimante</span>
+                                    <span class="spec-value" id="prnDetailPageSpecType">Laser (Monochrome)</span>
+                                </div>
+                            </div>
+                            <div class="spec-data-item-colored item-pink">
+                                <div class="item-icon-circle"><i class="fas fa-plug"></i></div>
+                                <div class="item-content-wrapper">
+                                    <span class="spec-label">Connexion</span>
+                                    <span class="spec-value" id="prnDetailPageSpecConnexion">Réseau
+                                        (Ethernet/WiFi)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Location details -->
+                    <div class="premium-detail-card detail-card-purple">
+                        <div class="detail-section-title" style="border-color: rgba(139, 92, 246, 0.2);">
+                            <i class="fas fa-map-marker-alt" style="color: var(--purple-500);"></i> Emplacement & Suivi
+                        </div>
+                        <div class="detail-specs-grid"
+                            style="grid-template-columns: 1fr;">
+                            <div class="spec-data-item-colored item-emerald">
+                                <div class="item-icon-circle"><i class="fas fa-building"></i></div>
+                                <div class="item-content-wrapper">
+                                    <span class="spec-label">Service / Emplacement</span>
+                                    <span class="spec-value" id="prnDetailPageSpecLocation">Secrétariat</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- ============ MODALS D'INFORMATIONS PREMIUM ============ -->
+
+    <!-- Modal Entreprise (LABO NEDJMA) -->
+    <div id="companyModal" class="custom-modal-overlay">
+        <div class="company-modal-container">
+            <button class="modal-close-btn" onclick="closeCompanyModal()" title="Fermer">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div class="company-logo-wrapper">
+                <img src="assets/logo-pdf.png" alt="LABO NEDJMA Logo" class="company-logo-img">
+            </div>
+
+            <div class="company-details-grid">
+                <!-- Siège Social Card -->
+                <div class="company-card card-siege-social">
+                    <div class="company-card-header">
+                        <i class="fas fa-university"></i>
+                        <span>Siège social</span>
+                    </div>
+                    <div class="company-card-body">
+                        <div class="contact-item">
+                            <i class="fas fa-phone-alt"></i>
+                            <a href="tel:00213555010107">00213 (0) 555 01 01 07</a>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <a href="mailto:contact@labo-nedjma.com">contact@labo-nedjma.com</a>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Lotissement 4 N°11 Douera, Alger - Algérie</span>
+                        </div>
+                        <a href="https://www.facebook.com/flux.care.labonedjma/?locale=fr_FR" target="_blank"
+                            class="company-fb-btn"
+                            style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.6rem; background: rgba(37, 99, 235, 0.07); border: 1px solid rgba(37, 99, 235, 0.2); border-radius: 0.75rem; padding: 0.65rem 1.2rem; color: #1d4ed8 !important; text-decoration: none; font-weight: 700; font-size: 0.85rem; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.03); margin-top: 0.8rem; align-self: stretch;">
+                            <i class="fab fa-facebook" style="font-size: 1.05rem;"></i>
+                            <span>Flux Care - Labo Nedjma</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Direction Commerciale Card -->
+                <div class="company-card card-direction-commerciale">
+                    <div class="company-card-header">
+                        <i class="fas fa-briefcase"></i>
+                        <span>Direction commerciale</span>
+                    </div>
+                    <div class="company-card-body">
+                        <div class="contact-item">
+                            <i class="fas fa-phone-alt"></i>
+                            <a href="tel:00213770112197">00213 (0) 770 11 21 97</a>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone-alt"></i>
+                            <span>00213 (0) 23 92 02 93 / 94</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-print"></i>
+                            <span>Fax: 00213 (0) 23 92 02 95</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-at"></i>
+                            <a href="mailto:commercial@labo-nedjma.com">commercial@labo-nedjma.com</a>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-building"></i>
+                            <span>Zone industrielle Oued Semmar</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="company-slogan">
+                Qualité & Innovation au service de votre beauté
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Développeur (Billel Bouraba) -->
+    <div id="devModal" class="custom-modal-overlay">
+        <div class="dev-modal-container">
+            <div class="dev-modal-layout">
+                <!-- Sidebar Profil -->
+                <div class="dev-profile-sidebar">
+                    <div class="dev-avatar-wrapper">
+                        <img src="assets/dev-avatar.png" alt="Billel Bouraba" class="dev-avatar-img">
+                    </div>
+                    <h3 class="dev-name">Billel Bouraba</h3>
+                    <div class="dev-title-tags">
+                        <span class="dev-tag tag-green">FULL-STACK DEVELOPER</span>
+                        <span class="dev-tag tag-blue">IT ARCHITECT</span>
+                    </div>
+                </div>
+
+                <!-- Contenu Profil -->
+                <div class="dev-profile-content">
+                    <div class="dev-section">
+                        <div class="dev-section-title">
+                            <i class="fas fa-quote-left"></i>
+                            <span>MA MISSION</span>
+                        </div>
+                        <p class="dev-mission-text">
+                            Passionné par l'innovation numérique et la performance IT, je conçois des solutions
+                            logicielles avancées pour optimiser la gestion des parcs informatiques. Mon objectif est
+                            d'allier ergonomie moderne et puissance technique.
+                        </p>
+                    </div>
+
+                    <div class="dev-section">
+                        <div class="dev-section-title">
+                            <i class="fas fa-microchip"></i>
+                            <span>EXPERTISE</span>
+                        </div>
+                        <div class="dev-expertise-badges">
+                            <span class="expertise-badge">Node/React</span>
+                            <span class="expertise-badge">UI/UX Design</span>
+                            <span class="expertise-badge">Réseaux IT</span>
+                        </div>
+                    </div>
+
+                    <div class="dev-social-actions"
+                        style="display: flex; gap: 1rem; margin-top: 0.5rem; margin-bottom: 1.8rem; width: 100%;">
+                        <a href="https://www.facebook.com/billel.bouraba/" target="_blank"
+                            class="dev-social-card fb-card"
+                            style="flex: 1; display: flex; align-items: center; gap: 0.8rem; background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.2); border-radius: 0.75rem; padding: 0.7rem 1.2rem; color: #60a5fa; text-decoration: none; font-weight: 600; font-size: 0.85rem; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.05);">
+                            <div
+                                style="width: 32px; height: 32px; border-radius: 50%; background: #2563eb; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; box-shadow: 0 0 10px rgba(37, 99, 235, 0.35); flex-shrink: 0;">
+                                <i class="fab fa-facebook-f"></i>
+                            </div>
+                            <div
+                                style="display: flex; flex-direction: column; align-items: flex-start; text-align: left;">
+                                <span
+                                    style="font-size: 0.7rem; color: #94a3b8; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">Facebook</span>
+                                <span
+                                    style="font-size: 0.82rem; color: #e2e8f0; font-weight: 700;">billel.bouraba</span>
+                            </div>
+                        </a>
+                        <a href="https://wa.me/213550129402" target="_blank" class="dev-social-card wa-card"
+                            style="flex: 1; display: flex; align-items: center; gap: 0.8rem; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 0.75rem; padding: 0.7rem 1.2rem; color: #34d399; text-decoration: none; font-weight: 600; font-size: 0.85rem; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.05);">
+                            <div
+                                style="width: 32px; height: 32px; border-radius: 50%; background: #10b981; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; box-shadow: 0 0 10px rgba(16, 185, 129, 0.35); flex-shrink: 0;">
+                                <i class="fab fa-whatsapp"></i>
+                            </div>
+                            <div
+                                style="display: flex; flex-direction: column; align-items: flex-start; text-align: left;">
+                                <span
+                                    style="font-size: 0.7rem; color: #94a3b8; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">WhatsApp</span>
+                                <span style="font-size: 0.82rem; color: #e2e8f0; font-weight: 700;">+213 550 12 94
+                                    02</span>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="dev-modal-footer">
+                        <span class="footer-right">CO-DEVELOPED WITH CODING VIBE & ADVANCED AI TECHNOLOGIES</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Paramètres Système -->
+    <div id="settingsModal" class="custom-modal-overlay" onclick="closeSettingsModalOuter(event)">
+        <div class="settings-modal-container">
+            <button class="modal-close-btn" onclick="closeSettingsModal()" title="Fermer">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div class="settings-modal-layout">
+                <!-- Sidebar gauche: Onglets -->
+                <div class="settings-sidebar">
+                    <div class="settings-sidebar-header">
+                        <i class="fas fa-sliders-h"></i>
+                        <span>PARAMÈTRES</span>
+                    </div>
+                    <div class="settings-tabs-list">
+                        <button id="setTab-general" class="settings-tab-btn active"
+                            onclick="switchSettingsTab('general')">
+                            <i class="fas fa-desktop"></i> Général
+                        </button>
+                        <button id="setTab-pdf" class="settings-tab-btn" onclick="switchSettingsTab('pdf')">
+                            <i class="fas fa-file-pdf"></i> Impression PDF
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Panneau droit: Contenu -->
+                <div class="settings-content-area">
+                    <!-- Onglet Général -->
+                    <div id="settingsPane-general" class="settings-pane active">
+                        <h3 class="settings-pane-title">️ Configuration de l'Interface</h3>
+                        <p class="settings-pane-desc">Personnalisez le titre, le slogan et le comportement visuel
+                            général de LABO-IT CONTROL.</p>
+
+                        <div class="settings-form-group">
+                            <label for="setAppName">Nom de l'application</label>
+                            <input type="text" id="setAppName" placeholder="LABO-IT CONTROL" class="settings-input">
+                            <small class="settings-input-help">Ce titre s'affiche dans le coin supérieur gauche de la
+                                barre de navigation.</small>
+                        </div>
+
+                        <div class="settings-form-group">
+                            <label for="setAppSlogan">Slogan de l'en-tête</label>
+                            <input type="text" id="setAppSlogan" placeholder="GESTION LABORATOIRE INFORMATIQUE" class="settings-input">
+                            <small class="settings-input-help">Ce slogan s'affiche juste en dessous du nom de
+                                l'application.</small>
+                        </div>
+
+                        <div class="settings-form-group" style="margin-top: 1.2rem;">
+                            <label for="setAccentPalette">Thème de Couleur d'Accent</label>
+                            <select id="setAccentPalette" class="settings-input">
+                                <option value="indigo">Royal Indigo (Bleu / Violet)</option>
+                                <option value="emerald">Emerald Teal (Émeraude / Vert)</option>
+                                <option value="rose">Sunset Rose (Rose / Orange)</option>
+                                <option value="ocean">Ocean Breeze (Cyan / Bleu)</option>
+                            </select>
+                            <small class="settings-input-help">Modifiez instantanément la couleur principale de toute
+                                l'application.</small>
+                        </div>
+
+                        <div class="settings-form-group"
+                            style="display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 1rem; border-top: 1px solid var(--border-color); padding-top: 1.2rem; margin-top: 1.2rem;">
+                            <div>
+                                <label
+                                    style="margin-bottom: 0.2rem; display: block; font-weight: 600; color: var(--text-primary);">Effets
+                                    de Lueur (Neon Glows)</label>
+                                <small class="settings-input-help" style="margin: 0;">Activer les halos colorés animés
+                                    au survol des cartes analytiques.</small>
+                            </div>
+                            <label class="switch-toggle"
+                                style="position: relative; display: inline-block; width: 44px; height: 22px;">
+                                <input type="checkbox" id="setNeonGlows" checked
+                                    style="opacity: 0; width: 0; height: 0;">
+                                <span class="slider-toggle"></span>
+                            </label>
+                        </div>
+
+                        <div class="settings-form-group"
+                            style="display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 1rem; border-top: 1px solid var(--border-color); padding-top: 1.2rem; margin-top: 1.2rem;">
+                            <div>
+                                <label
+                                    style="margin-bottom: 0.2rem; display: block; font-weight: 600; color: var(--text-primary);">Conseils
+                                    de l'Assistant</label>
+                                <small class="settings-input-help" style="margin: 0;">Afficher ou masquer la boîte de
+                                    conseils du jour en bas du Tableau de Bord.</small>
+                            </div>
+                            <label class="switch-toggle"
+                                style="position: relative; display: inline-block; width: 44px; height: 22px;">
+                                <input type="checkbox" id="setShowAdvisory" checked
+                                    style="opacity: 0; width: 0; height: 0;">
+                                <span class="slider-toggle"></span>
+                            </label>
+                        </div>
+
+                        <div class="settings-form-group"
+                            style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; border-top: 1px solid var(--border-color); padding-top: 1.2rem; margin-top: 1.2rem;">
+                            <div>
+                                <label for="setStockThreshold">Seuil d'alerte stock</label>
+                                <input type="number" id="setStockThreshold" min="1" max="99" value="5"
+                                    class="settings-input">
+                                <small class="settings-input-help">Notification quand le stock atteint
+                                    <span id="stockThresholdVal">5 Pièces</span>.</small>
+                            </div>
+                            <div>
+                                <label for="setLoanDuration">Durée de prêt par défaut</label>
+                                <input type="number" id="setLoanDuration" min="1" max="365" value="30"
+                                    class="settings-input">
+                                <small class="settings-input-help">Nombre de jours utilisé pour les prêts et suivis.</small>
+                            </div>
+                        </div>
+
+                        <div class="settings-form-group"
+                            style="display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 1rem; border-top: 1px solid var(--border-color); padding-top: 1.2rem; margin-top: 1.2rem;">
+                            <div>
+                                <label
+                                    style="margin-bottom: 0.2rem; display: block; font-weight: 600; color: var(--text-primary);">Effets
+                                    Sonores (Audio Chimes)</label>
+                                <small class="settings-input-help" style="margin: 0;">Jouer un signal sonore cristallin
+                                    en temps réel lors de l'affichage des notifications de succès ou d'erreur.</small>
+                            </div>
+                            <label class="switch-toggle"
+                                style="position: relative; display: inline-block; width: 44px; height: 22px;">
+                                <input type="checkbox" id="setSoundEffects" checked
+                                    style="opacity: 0; width: 0; height: 0;">
+                                <span class="slider-toggle"></span>
+                            </label>
+                        </div>
+
+                        <div class="settings-form-group"
+                            style="display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 1rem; border-top: 1px solid var(--border-color); padding-top: 1.2rem; margin-top: 1.2rem;">
+                            <div>
+                                <label
+                                    style="margin-bottom: 0.2rem; display: block; font-weight: 600; color: var(--text-primary);"><i
+                                        class="fas fa-trash-alt" style="color: var(--red-500); margin-right: 5px;"></i>
+                                    Maintenance du Cache 2.0.1</label>
+                                <small class="settings-input-help" style="margin: 0;">Effacer le stockage local (cache
+                                    de l'application) et forcer le rechargement complet pour appliquer les dernières
+                                    mises à jour du système.</small>
+                            </div>
+                            <button class="btn" onclick="clearSystemCacheAndRestart()"
+                                style="border: 2px solid var(--red-500); color: var(--red-500); padding: 0.6rem 1.2rem; font-size: 0.85rem; border-radius: 0.75rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; background: none;"
+                                onmouseover="this.style.background='rgba(239, 68, 68, 0.1)'"
+                                onmouseout="this.style.background='none'">
+                                <i class="fas fa-sync-alt"></i> Vider le Cache
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Onglet Impression PDF -->
+                    <div id="settingsPane-pdf" class="settings-pane">
+                        <h3 class="settings-pane-title">Personnalisation des fiches PDF</h3>
+                        <p class="settings-pane-desc">Modifiez les titres des blocs de signature en bas de la fiche
+                            d'impression de besoins A4.</p>
+
+                        <div class="settings-form-group">
+                            <label for="setSig1">Signataire 1 (Gauche)</label>
+                            <input type="text" id="setSig1" placeholder="Le Demandeur" class="settings-input">
+                            <small class="settings-input-help">Généralement réservé à la personne qui déclare le
+                                besoin.</small>
+                        </div>
+
+                        <div class="settings-form-group">
+                            <label for="setSig2">Signataire 2 (Milieu)</label>
+                            <input type="text" id="setSig2" placeholder="Le Responsable du service"
+                                class="settings-input">
+                            <small class="settings-input-help">Généralement réservé à la validation hiérarchique
+                                directe.</small>
+                        </div>
+
+                        <div class="settings-form-group">
+                            <label for="setSig3">Signataire 3 (Droite)</label>
+                            <input type="text" id="setSig3" placeholder="ASSISTANTE MGX" class="settings-input">
+                            <small class="settings-input-help">Généralement réservé aux services généraux ou
+                                achats.</small>
+                        </div>
+                    </div>
+
+
+
+                    <!-- Footer Options -->
+                    <div class="settings-modal-footer"
+                        style="display: flex; gap: 1rem; justify-content: flex-end; border-top: 1px solid var(--border-color); padding-top: 1.5rem; margin-top: 1.5rem;">
+                        <button onclick="closeSettingsModal()" class="btn"
+                            style="background: transparent; border: 1px solid var(--border-color); color: var(--text-primary); font-weight: 600; padding: 0.6rem 1.5rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.9rem;">
+                            Annuler
+                        </button>
+                        <button onclick="saveAppSettings()" class="btn"
+                            style="background: var(--gradient-blue-purple); border: none; color: white; font-weight: 600; padding: 0.6rem 1.8rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 0.4rem;">
+                            <i class="fas fa-save"></i> Enregistrer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs (Compat v10.8.0) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
+
+    <script src="js/app.js?v=2.0.1"></script>
+
+</body>
+
+</html>
