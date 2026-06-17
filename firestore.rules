@@ -1,0 +1,56 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // السماح بالقراءة والكتابة فقط للمستخدمين المسجلين في النظام
+    match /itAssets/{assetId} {
+      allow read, write: if request.auth != null;
+    }
+
+    match /itPrinters/{printerId} {
+      allow read, write: if request.auth != null;
+    }
+
+    match /systemLogs/{logId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // ─── القواعد الجديدة للأقسام السحابية الإضافية ───
+
+    // 1. المخزون السحابي
+    match /itStock/{stockId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // 2. عمليات الإعارة والتوزيع
+    match /itDistributions/{distId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // 3. طلبات الاحتياجات IT
+    match /itBesoins/{besoinId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // 4. الشحنات والبعثات
+    match /itEnvois/{envoiId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // 5. بلاغات الأعطال والتشخيص
+    match /itPannes/{panneId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // 6. الهواتف، التابلات و PDA
+    match /itMobiles/{mobileId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // 7. تراخيص الواي فاي (Autorisations Wi-Fi)
+    match /wifiAuthorizations/{authId} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
