@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 160" width="100%" height="100%">
+  <defs>
+    <linearGradient id="silverGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="50%" stop-color="#f8fafc" />
+      <stop offset="100%" stop-color="#e2e8f0" />
+    </linearGradient>
+  </defs>
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&amp;family=Montserrat:wght@500;600;700&amp;display=swap');
+    
+    .logo-text-main {
+      font-family: 'Playfair Display', 'Didot', 'Georgia', 'Times New Roman', serif;
+      font-weight: 700;
+      fill: url(#silverGradient);
+      font-size: 72px;
+      letter-spacing: -1px;
+    }
+    .logo-text-sub {
+      font-family: 'Montserrat', 'Inter', 'Helvetica Neue', sans-serif;
+      font-size: 19px;
+      font-weight: 600;
+      fill: #e2e8f0;
+      letter-spacing: 9.5px;
+      text-anchor: middle;
+    }
+    .logo-star {
+      fill: url(#silverGradient);
+      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+    }
+    .logo-line {
+      fill: url(#silverGradient);
+      opacity: 0.9;
+    }
+  </style>
+
+  <!-- Top Tapered Line (Perfect Symmetry at Center 340) -->
+  <path class="logo-line" d="M 50,22 Q 340,20 630,22 Q 340,24 50,22" />
+
+  <!-- Main Brand Name -->
+  <!-- Letter L -->
+  <text class="logo-text-main" x="60" y="96">L</text>
+  
+  <!-- Stylized Star (A) - Shifted right by 18px to prevent overlap and accommodate wider text -->
+  <g transform="translate(18, 0)">
+    <path class="logo-star" d="M 148,22 C 141,43 135,48 130,54 C 135,60 142,65 147,73 C 135,68 129,64 123,62 C 115,72 109,80 102,88 C 109,72 112,64 115,54 C 105,50 95,48 89,45 C 105,43 112,43 119,45 C 129,36 139,28 148,22 Z" />
+  </g>
+
+  <!-- BONEDJMA with forced length restriction to prevent ANY clipping of 'MA' -->
+  <text class="logo-text-main" x="178" y="96" textLength="370" lengthAdjust="spacing">BONEDJMA</text>
+
+  <!-- Subtitle (Centered at 340) -->
+  <text class="logo-text-sub" x="340" y="125">LABORATOIRES COSMÉTIQUES</text>
+
+  <!-- Bottom Tapered Line (Perfect Symmetry at Center 340) -->
+  <path class="logo-line" d="M 50,138 Q 340,136 630,138 Q 340,140 50,138" />
+</svg>
